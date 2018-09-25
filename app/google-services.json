@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "854314075229",
+    "firebase_url": "https://the-banker-65f48.firebaseio.com",
+    "project_id": "the-banker-65f48",
+    "storage_bucket": "the-banker-65f48.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854314075229:android:7908950c46973c1f",
+        "android_client_info": {
+          "package_name": "com.maxtauro.monopolywallet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "854314075229-2r13uknurdt6mmubqi8g15e1uhctpdfo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8l8KWqi4yx-Skt7zx6aqYRfXDBwl2QEI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
