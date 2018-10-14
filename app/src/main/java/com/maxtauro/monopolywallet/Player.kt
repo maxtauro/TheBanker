@@ -6,9 +6,14 @@ class  Player {
     var playerId: String
     var playerBalance: Int = 1500
 
-    constructor(playerName : String, playerId : String, gameBank: GameBank) {
-        this.playerName = playerName
+    constructor() {
+        playerName = "didn't init"
+        playerId = "id didn't init"
+    }
+
+    constructor(playerId : String, playerName : String) {
         this.playerId = playerId
+        this.playerName = playerName
     }
 
     fun getMoney(debitAmount : Int) {
