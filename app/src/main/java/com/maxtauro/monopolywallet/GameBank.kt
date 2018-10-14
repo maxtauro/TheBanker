@@ -1,14 +1,18 @@
 package com.maxtauro.monopolywallet
 
-class GameBank {
-
-    val PLAYER_STARTING_CASH = 1500
-    val MAX_PLAYERS = 8
-    val MIN_PLAYERS = 2
-
-    var gameID: Int = 0
+import java.util.*
 
 
+data class GameBank(var hostName : String, var gameId : String = generateRandomId()) {
 
+    val PLAYER_STARTING_CASH : Int = 1500
+    val MAX_PLAYERS : Int = 8
+    val MIN_PLAYERS : Int = 2
+
+    companion object {
+        fun generateRandomId(): String {
+            return UUID.randomUUID().toString().replace("-","").substring(0,6)
+        }
+    }
 
 }

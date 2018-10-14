@@ -20,7 +20,7 @@
 
     <Button
         android:id="@+id/start_button"
-        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+        style="@android:style/Widget.Material.Button.Small"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="109dp"
@@ -28,7 +28,7 @@
         android:layout_marginStart="1dp"
         android:layout_marginTop="120dp"
         android:text="@string/start_game_button_string"
-        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/join_button"
@@ -36,7 +36,7 @@
 
     <Button
         android:id="@+id/join_button"
-        style="@style/FirebaseUI.Button.AccountChooser.GoogleButton"
+        style="@android:style/Widget.Material.Button.Small"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="109dp"
@@ -44,7 +44,7 @@
         android:layout_marginStart="82dp"
         android:layout_marginTop="120dp"
         android:text="@string/join_game_button_string"
-        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/start_button"
         app:layout_constraintStart_toStartOf="parent"
