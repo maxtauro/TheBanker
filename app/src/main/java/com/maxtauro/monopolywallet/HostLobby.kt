@@ -31,21 +31,22 @@ class HostLobby :  AppCompatActivity() {
 
     private fun setupGame() {
         val gameId = GameBank.generateRandomId()
+        val hostName = intent.extras["hostName"] as String
 
         var txtGameId: TextView = findViewById(R.id.txt_game_id) //TODO maybe pull UI elements into another method
         txtGameId.text = "Game #: $gameId"
 
         firebaseHelper = FirebaseHelper(gameId)
 
-        firebaseHelper.createGame(gameId, "Host name to input") // TODO enter a host name
-        firebaseHelper.joinGame(gameId, "Host name to input")
+        firebaseHelper.createGame(gameId, hostName) // TODO enter a host name
+        firebaseHelper.joinGame(gameId, hostName)
         playerListInit()
     }
 
     private fun setupButtons() {
         val btnCancel = findViewById<Button>(R.id.btn_cancel)
         btnCancel.setOnClickListener {
-//            firebaseHelper.deleteGame() TODO
+            firebaseHelper.deleteGame()
             finish()
         }
 

@@ -3,7 +3,7 @@ package com.maxtauro.monopolywallet
 import android.provider.ContactsContract
 import com.google.firebase.database.*
 
-class FirebaseHelper(gameId: String) {
+class FirebaseHelper(val gameId: String) {
 
     var database = FirebaseDatabase.getInstance()
     var databaseRef = database.reference
@@ -50,11 +50,11 @@ class FirebaseHelper(gameId: String) {
     }
 
     fun deleteGame() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        databaseRef.child(gameId).removeValue()
     }
 
-    fun leaveGame() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    fun leaveGame(playerName: String) {
+        playerListRef.child(playerName).removeValue()
     }
 
 

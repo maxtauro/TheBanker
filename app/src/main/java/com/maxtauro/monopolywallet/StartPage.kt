@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 class StartPage : AppCompatActivity() {
 
     val dialogJoinGame = DialogFragmentJoinGame()
+    val dialogCreateGame = DialogFragmentCreateGame()
 
     private lateinit var firebaseHelper : FirebaseHelper
 
@@ -33,8 +34,7 @@ class StartPage : AppCompatActivity() {
 
         val btnStart = findViewById<Button>(R.id.start_button)
         btnStart.setOnClickListener {
-            val hostLobbyIntent = Intent(this, HostLobby::class.java)
-            startActivity(hostLobbyIntent)
+            dialogCreateGame.show(supportFragmentManager, "create game dialog")
         }
     }
 
@@ -54,7 +54,13 @@ class StartPage : AppCompatActivity() {
         }
     }
 
-    fun joinGameAsync(gameId: String, playerName: String) { //TODO think of better n
+    fun createGame(hostName : String) {
+        val hostLobbyIntent = Intent(this, HostLobby::class.java)
+        hostLobbyIntent.putExtra("hostName", hostName)
+        startActivity(hostLobbyIntent)
+    }
+
+    fun joinGameAsync(gameId: String, playerName: String) { //TODO think of better name
                                                             //TODO try to move to firebaseHelper
         val playerLobbyIntent = Intent(this, JoinLobby::class.java)
 

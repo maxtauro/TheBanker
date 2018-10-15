@@ -23,7 +23,6 @@ class JoinLobby:  AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_join_lobby)
 
-        setupButtons()
         setupGame()
         playerListInit()
     }
@@ -39,15 +38,14 @@ class JoinLobby:  AppCompatActivity() {
         txtGameId.text = "Game #: $gameId"
 
         firebaseHelper.joinGame(gameId, playerName)
-    }
 
-    private fun setupButtons() {
         val btnStart = findViewById<Button>(R.id.btn_leave)
         btnStart.setOnClickListener {
-            //firebaseHelper.leaveGame() TODO
+            firebaseHelper.leaveGame(playerName)
             finish()
         }
     }
+
 
     private fun playerListInit() {
 
