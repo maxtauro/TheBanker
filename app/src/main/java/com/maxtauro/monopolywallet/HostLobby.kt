@@ -1,16 +1,24 @@
 package com.maxtauro.monopolywallet
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.RequiresApi
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.firebase.ui.database.FirebaseRecyclerAdapter
+import com.google.firebase.messaging.FirebaseMessaging
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
+
 
 class HostLobby :  AppCompatActivity() {
 
@@ -24,6 +32,15 @@ class HostLobby :  AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_lobby)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            val channelId = getString(R.string.default_notification_channel_id)
+            val channelName = getString(R.string.default_notification_channel_name)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager?.createNotificationChannel(NotificationChannel(channelId,
+                    channelName, NotificationManager.IMPORTANCE_LOW))
+        }
 
         setupButtons()
         setupGame()
@@ -40,6 +57,20 @@ class HostLobby :  AppCompatActivity() {
 
         firebaseHelper.createGame(gameId, hostName) // TODO enter a host name
         firebaseHelper.joinGame(gameId, hostName)
+
+        FirebaseMessaging.getInstance().subscribeToTopic(gameId)
+                .addOnCompleteListener { task ->
+                    var msg = getString(R.string.msg_subscribed)
+                    if (!task.isSuccessful) {
+                        msg = getString(R.string.msg_subscribe_failed)
+                    }
+                    Log.d("JoinLobby" , msg)
+                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                }
+
+
+
+
         playerListInit()
     }
 
@@ -52,7 +83,9 @@ class HostLobby :  AppCompatActivity() {
 
         val btnStart = findViewById<Button>(R.id.btn_start)
         btnStart.setOnClickListener {
-            TODO("Need to implemenet start method")
+            var notificationUtil = FirebaseNotificationUtil()
+            notificationUtil.sendNotificationToUser(firebaseHelper.gameId, "Test from host")
+            //TODO("Need to implemenet start method")
         }
     }
 
@@ -63,19 +96,28 @@ class HostLobby :  AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         listPlayersRecyclerView.layoutManager = layoutManager
 
-        adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(
-                Player::class.java,
-                R.layout.list_holder_player_layout,
-                PlayerListViewHolder::class.java,
-                firebaseHelper.playerListRef
-        ) {
-            override fun populateViewHolder(viewHolder : PlayerListViewHolder, player : Player, position : Int) {
-                viewHolder.txtPlayerName.setText(player.playerName)
-
-                fun onClick(view: View, position: Int) {
-
+        val options = FirebaseRecyclerOptions.Builder<Player>()
+                .setQuery(firebaseHelper.playerListRef) { snapshot ->
+                    Player(snapshot.child("playerId").toString(),
+                            snapshot.child("playerName").toString())
                 }
+                .build()
+
+        adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
+
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerListViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.list_holder_player_layout, parent, false)
+
+                return PlayerListViewHolder(view)
             }
+
+            override fun onBindViewHolder(holder: PlayerListViewHolder, position: Int, player: Player) {
+                holder.txtPlayerName.text = player.playerName
+//                holder.root.setOnClickListener(View.OnClickListener { Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show() })
+            }
+
         }
 
         adapter.notifyDataSetChanged()

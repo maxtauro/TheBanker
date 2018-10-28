@@ -1,0 +1,30 @@
+{
+  "name": "firebasenodeprocess",
+  "version": "1.0.0",
+  "description": "Node Process to handle Firebase cloud messages from devices",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.4",
+    "firebase-admin": "^6.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "deploy": "gcloud app deploy",
+    "start": "node app.js",
+    "lint": "repo-tools lint",
+    "pretest": "npm run lint",
+    "system-test": "repo-tools test app",
+    "test": "npm run system-test",
+    "e2e-test": "repo-tools test deploy"
+  },
+  "author": "Max Tauro",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxtauro/TheBanker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/maxtauro/TheBanker/issues"
+  },
+  "homepage": "https://github.com/maxtauro/TheBanker#readme"
+}
