@@ -10,6 +10,8 @@ import android.widget.Button
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
+import com.maxtauro.monopolywallet.util.FirebaseHelper
 
 class StartPage : AppCompatActivity() {
 
@@ -23,6 +25,8 @@ class StartPage : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setupButtons()
+
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true) //TODO move this into game
 
     }
 
@@ -68,8 +72,8 @@ class StartPage : AppCompatActivity() {
         var gameRef = firebaseHelper.databaseRef.child(gameId)
 
         gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot?) {
-                        if(snapshot!!.exists()) {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if(dataSnapshot!!.exists()) {
 
                             playerLobbyIntent.putExtra("playerName", playerName) // TODO have the name arg be from some enum
                             playerLobbyIntent.putExtra("gameId", gameId)
@@ -80,9 +84,9 @@ class StartPage : AppCompatActivity() {
                             //TODO add toast like pop up to explain that the game is invalid
                             Log.e("DialogFragment", "Tried to join invalid game")
                         }
-                    }
-                    override fun onCancelled(p0: DatabaseError?) {}
-                })
+            }
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
     }
 
 }

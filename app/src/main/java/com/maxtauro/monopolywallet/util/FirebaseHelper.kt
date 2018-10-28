@@ -1,7 +1,11 @@
-package com.maxtauro.monopolywallet
+package com.maxtauro.monopolywallet.util
 
-import android.provider.ContactsContract
 import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.ValueEventListener
+import com.maxtauro.monopolywallet.Player
+
 
 class FirebaseHelper(val gameId: String) {
 
@@ -40,10 +44,10 @@ class FirebaseHelper(val gameId: String) {
         var gameRef = databaseRef.child(gameId)
 
         gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot?) {
-                gameIdExists = snapshot!!.exists()
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                gameIdExists = dataSnapshot!!.exists()
             }
-            override fun onCancelled(p0: DatabaseError?) {}
+            override fun onCancelled(databaseError: DatabaseError) {}
         })
 
         return gameIdExists
