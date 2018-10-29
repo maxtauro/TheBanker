@@ -69,8 +69,6 @@ class HostLobby :  AppCompatActivity() {
                 }
 
 
-
-
         playerListInit()
     }
 
@@ -97,11 +95,9 @@ class HostLobby :  AppCompatActivity() {
         listPlayersRecyclerView.layoutManager = layoutManager
 
         val options = FirebaseRecyclerOptions.Builder<Player>()
-                .setQuery(firebaseHelper.playerListRef) { snapshot ->
-                    Player(snapshot.child("playerId").toString(),
-                            snapshot.child("playerName").toString())
-                }
+                .setQuery(firebaseHelper.playerListRef, Player::class.java)
                 .build()
+
 
         adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
 
@@ -120,7 +116,7 @@ class HostLobby :  AppCompatActivity() {
 
         }
 
-        adapter.notifyDataSetChanged()
+        adapter.startListening()
         listPlayersRecyclerView.adapter = adapter
     }
 

@@ -87,14 +87,10 @@ class JoinLobby:  AppCompatActivity() {
 
 
         val options = FirebaseRecyclerOptions.Builder<Player>()
-                .setQuery(firebaseHelper.playerListRef) { snapshot ->
-                    Player(snapshot.child("playerId").toString(),
-                            snapshot.child("playerName").toString())
-                }
+                .setQuery(firebaseHelper.playerListRef, Player::class.java)
                 .build()
 
         adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
-
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerListViewHolder {
                 val view = LayoutInflater.from(parent.context)
@@ -110,7 +106,7 @@ class JoinLobby:  AppCompatActivity() {
 
         }
 
-        adapter.notifyDataSetChanged()
+        adapter.startListening()
         listPlayersRecyclerView.adapter = adapter
     }
 
