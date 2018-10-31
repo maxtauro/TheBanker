@@ -19,8 +19,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".HostLobby" />
         <activity android:name=".JoinLobby" />
+        <activity android:name=".HostGame" />
+        <activity android:name=".JoinGame" />
 
 
         <service

@@ -82,8 +82,8 @@ class HostLobby :  AppCompatActivity() {
         val btnStart = findViewById<Button>(R.id.btn_start)
         btnStart.setOnClickListener {
             var notificationUtil = FirebaseNotificationUtil()
-            notificationUtil.sendNotificationToUser(firebaseHelper.gameId, "Test from host")
-            //TODO("Need to implemenet start method")
+            notificationUtil.startGame(firebaseHelper.gameId)
+            firebaseHelper.startGame()
         }
     }
 

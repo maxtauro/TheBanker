@@ -1,9 +1,11 @@
 package com.maxtauro.monopolywallet.util
 
+import android.content.Intent
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-
+import com.maxtauro.monopolywallet.HostGame
+import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
 
 class NotificationService : FirebaseMessagingService() {
@@ -33,22 +35,35 @@ class NotificationService : FirebaseMessagingService() {
         remoteMessage?.data?.isNotEmpty()?.let {
             Log.d(TAG, "Message data payload: " + remoteMessage.data)
 
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob()
-            } else {
-                // Handle message within 10 seconds
-                handleNow()
-            }
+
+
+//            if (/* Check if data needs to be processed by long running job */ true) {
+//                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
+//                scheduleJob()
+//            } else {
+//                // Handle message within 10 seconds
+//                handleNow()
+//            }
         }
 
         // Check if message contains a notification payload.
         remoteMessage?.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
+            when (it.body) {
+                StandardNotifications.START_GAME_NOTIFICATION.toString() -> startGame()
+            }
         }
+
+
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
+    }
+
+    private fun startGame() {
+        val startGameIntent = Intent(this, HostGame::class.java)
+        startGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startGameIntent)
     }
     // [END receive_message]
 

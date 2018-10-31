@@ -9,6 +9,8 @@ import com.maxtauro.monopolywallet.Player
 
 class FirebaseHelper(val gameId: String) {
 
+    var notificationUtil = FirebaseNotificationUtil()
+
     var database = FirebaseDatabase.getInstance()
     var databaseRef = database.reference
 
@@ -51,6 +53,13 @@ class FirebaseHelper(val gameId: String) {
         })
 
         return gameIdExists
+    }
+
+    fun startGame() {
+
+        gameRef.child("isGameActive").setValue(true)
+        notificationUtil.startGame(gameId)
+
     }
 
     fun deleteGame() {

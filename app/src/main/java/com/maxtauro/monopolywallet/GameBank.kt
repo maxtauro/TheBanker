@@ -3,7 +3,7 @@ package com.maxtauro.monopolywallet
 import java.util.*
 
 
-data class GameBank(var hostName : String, var gameId : String = generateRandomId()) {
+data class GameBank(var hostName : String, var gameId : String = generateRandomId(), var isGameActive : Boolean = false) {
 
     val PLAYER_STARTING_CASH : Int = 1500
     val MAX_PLAYERS : Int = 8

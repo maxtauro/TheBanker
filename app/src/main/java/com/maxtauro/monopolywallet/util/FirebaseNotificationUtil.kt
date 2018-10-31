@@ -4,13 +4,13 @@ import com.google.firebase.database.FirebaseDatabase
 
 class FirebaseNotificationUtil() {
 
-    fun sendNotificationToUser(gameId: String, message: String) {
+    fun startGame(gameId: String) {
         val ref = FirebaseDatabase.getInstance().reference
         val notifications = ref.child("notificationRequests")
 
         val notification = HashMap<String, String>()
-        notification.put("username", gameId)
-        notification.put("message", message)
+        notification.put("gameId", gameId)
+        notification.put("NOTIFICATION_TYPE", "START_GAME_NOTIFICATION")
 
         notifications.push().setValue(notification)
     }
