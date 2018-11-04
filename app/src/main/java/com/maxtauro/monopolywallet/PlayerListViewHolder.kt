@@ -5,6 +5,9 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 
+/**
+ * TODO add authoring, date, and desc
+ */
 class PlayerListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
 
     lateinit var txtPlayerName: TextView

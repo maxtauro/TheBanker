@@ -15,13 +15,20 @@ import android.widget.TextView
 import android.widget.Toast
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
 import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.util.TopicSubscriptionUtil
 
+/**
+ * TODO add authoring, date, and desc
+ */
 class JoinLobby:  AppCompatActivity() {
 
     lateinit var firebaseHelper : FirebaseHelper
-    lateinit var game : GameBank
+    private lateinit var auth: FirebaseAuth
+
+    lateinit var game : GameDao
 
     //RecyclerView
     lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
@@ -32,6 +39,7 @@ class JoinLobby:  AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_join_lobby)
 
+        //TODO do I even want this here?
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
             val channelId = getString(R.string.default_notification_channel_id)
@@ -40,11 +48,15 @@ class JoinLobby:  AppCompatActivity() {
             notificationManager?.createNotificationChannel(NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_LOW))
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
 
-
+        auth = FirebaseAuth.getInstance()
 
         setupGame()
+        setupNotificationServices()
         playerListInit()
     }
 
@@ -75,6 +87,19 @@ class JoinLobby:  AppCompatActivity() {
             firebaseHelper.leaveGame(playerName)
             finish()
         }
+    }
+
+    private fun setupNotificationServices() {
+        val gameId = firebaseHelper.gameId
+
+        val topicSubscriptionUtil = TopicSubscriptionUtil()
+
+        // Subscribe To Game Notifications
+        topicSubscriptionUtil.subscribeToTopic(gameId)
+
+        //Subscribe To Personal Topic
+        val personalTopic = gameId + auth.uid
+        topicSubscriptionUtil.subscribeToTopic(personalTopic)
     }
 
 

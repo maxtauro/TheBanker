@@ -2,6 +2,9 @@ package com.maxtauro.monopolywallet.util
 
 import com.google.firebase.database.FirebaseDatabase
 
+/**
+ * TODO add authoring, date, and desc
+ */
 class FirebaseNotificationUtil() {
 
     fun startGame(gameId: String) {

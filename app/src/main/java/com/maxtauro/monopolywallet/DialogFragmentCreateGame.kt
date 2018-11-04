@@ -6,6 +6,9 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.widget.EditText
 
+/**
+ * TODO add authoring, date, and desc
+ */
 class DialogFragmentCreateGame: DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -23,7 +26,6 @@ class DialogFragmentCreateGame: DialogFragment() {
 
                     val callingActivity = activity as StartPage?
                     callingActivity?.createGame(hostNameInputTxt)
-
                 }
                 .setNegativeButton("Cancel") { dialog, whichButton ->
                     dismiss()

@@ -57,7 +57,7 @@ function listenForNotificationRequests() {
 
 function sendStartGameNotification(gameId, onSuccess) {
 
-    console.log('sendStartGameNotification: Trying to send START_GAME_NOTIFICATION to ' + request.gameId);
+    console.log('sendStartGameNotification: Trying to send START_GAME_NOTIFICATION to ' + gameId);
 
     request({
         url: 'https://fcm.googleapis.com/fcm/send',
@@ -68,9 +68,12 @@ function sendStartGameNotification(gameId, onSuccess) {
         },
 
         body: JSON.stringify({
+
+            data: {
+                "GAME_ID" : gameId
+            },
             notification: {
                 body: 'START_GAME_NOTIFICATION',
-                message: gameId
             },
             to : '/topics/' + gameId
         })

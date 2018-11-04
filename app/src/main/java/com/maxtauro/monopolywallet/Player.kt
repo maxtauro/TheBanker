@@ -1,11 +1,15 @@
 package com.maxtauro.monopolywallet
 
-class  Player {
+/**
+ * TODO add authoring, date, and desc
+ */
+class Player {
 
     var playerName: String
     var playerId: String
     var playerBalance: Int = 1500
 
+    // Need a no argument ctor for firebase, you should NEVER call this explicitly
     constructor() {
         playerName = "didn't init"
         playerId = "id didn't init"

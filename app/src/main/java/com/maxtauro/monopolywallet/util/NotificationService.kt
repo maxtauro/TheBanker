@@ -2,70 +2,77 @@ package com.maxtauro.monopolywallet.util
 
 import android.content.Intent
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.maxtauro.monopolywallet.HostGame
+import com.maxtauro.monopolywallet.JoinGame
+
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
-
+/**
+ * TODO add authoring, date, and desc
+ */
 class NotificationService : FirebaseMessagingService() {
+
+    lateinit var gameId: String
+
+    //Auth
+    private lateinit var auth: FirebaseAuth
+
+    override fun onCreate() {
+        auth = FirebaseAuth.getInstance()
+        super.onCreate()
+    }
 
     /**
      * Called when message is received.
      *
      * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
      */
-    // [START receive_message]
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
-        // [START_EXCLUDE]
-        // There are two types of messages data messages and notification messages. Data messages are handled
-        // here in onMessageReceived whether the app is in the foreground or background. Data messages are the type
-        // traditionally used with GCM. Notification messages are only received here in onMessageReceived when the app
-        // is in the foreground. When the app is in the background an automatically generated notification is displayed.
-        // When the user taps on the notification they are returned to the app. Messages containing both notification
-        // and data payloads are treated as notification messages. The Firebase console always sends notification
-        // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
-        // [END_EXCLUDE]
 
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: ${remoteMessage?.from}")
 
         // Check if message contains a data payload.
         remoteMessage?.data?.isNotEmpty()?.let {
             Log.d(TAG, "Message data payload: " + remoteMessage.data)
 
-
-
-//            if (/* Check if data needs to be processed by long running job */ true) {
-//                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-//                scheduleJob()
-//            } else {
-//                // Handle message within 10 seconds
-//                handleNow()
-//            }
         }
 
         // Check if message contains a notification payload.
         remoteMessage?.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
             when (it.body) {
-                StandardNotifications.START_GAME_NOTIFICATION.toString() -> startGame()
+                StandardNotifications.START_GAME_NOTIFICATION.toString() -> startGame(remoteMessage)
             }
         }
 
-
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
 
-    private fun startGame() {
-        val startGameIntent = Intent(this, HostGame::class.java)
-        startGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    private fun startGame(remoteMessage: RemoteMessage?) {
+
+        val gameIdField = GameStartNotification.MessageDataFields.GAME_ID.toString()
+        val gameId = remoteMessage!!.data[gameIdField]
+
+        if (gameId == null || gameId == "") TODO("HANDLE BAD NOTIFICATION FOR START GAME")
+
+        val gameHostId : String =  FirebaseHelper.getGameHostUid(gameId!!)
+
+        val startGameIntent: Intent
+
+        if (gameHostId == auth.uid) {
+            startGameIntent = Intent(this, HostGame::class.java)
+        }
+
+        else {
+            startGameIntent = Intent(this, JoinGame::class.java)
+        }
+
+        startGameIntent.putExtra("gameId", gameId)
+        startGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(startGameIntent)
     }
-    // [END receive_message]
 
     // [START on_new_token]
     /**
@@ -152,6 +159,6 @@ class NotificationService : FirebaseMessagingService() {
 
     companion object {
 
-        private const val TAG = "MyFirebaseMsgService"
+        private const val TAG = "NotificationService"
     }
 }

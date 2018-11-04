@@ -1,5 +1,10 @@
 package com.maxtauro.monopolywallet.util.NotificationTypes
 
+
+/**
+ * TODO add authoring, date, and desc
+ */
+
 enum class StandardNotifications {
 
     START_GAME_NOTIFICATION,

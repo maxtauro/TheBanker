@@ -7,22 +7,24 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.google.firebase.messaging.FirebaseMessaging
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
+import com.maxtauro.monopolywallet.util.TopicSubscriptionUtil
 
-
+/**
+ * TODO add authoring, date, and desc
+ */
 class HostLobby :  AppCompatActivity() {
 
-    lateinit var firebaseHelper: FirebaseHelper
+    private lateinit var firebaseHelper: FirebaseHelper
+    private lateinit var auth: FirebaseAuth
 
     //RecyclerView
     lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
@@ -41,33 +43,47 @@ class HostLobby :  AppCompatActivity() {
             notificationManager?.createNotificationChannel(NotificationChannel(channelId,
                     channelName, NotificationManager.IMPORTANCE_LOW))
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        auth = FirebaseAuth.getInstance()
 
         setupButtons()
         setupGame()
+        setupNotificationService()
+    }
+
+    private fun setupNotificationService() {
+
+        val gameId = firebaseHelper.gameId
+
+        val topicSubscriptionUtil = TopicSubscriptionUtil()
+
+        // Subscribe To Game Notifications
+        topicSubscriptionUtil.subscribeToTopic(gameId)
+
+        //Subscribe To Personal Topic
+        val personalTopic = gameId + auth.uid
+        topicSubscriptionUtil.subscribeToTopic(personalTopic)
+
+        // Subscribe To Game Host Topic
+        val hostTopic = ("$gameId Host").replace("\\s".toRegex(), "")
+        topicSubscriptionUtil.subscribeToTopic(hostTopic)
     }
 
     private fun setupGame() {
-        val gameId = GameBank.generateRandomId()
+        val gameId = GameDao.generateRandomId()
         val hostName = intent.extras["hostName"] as String
 
-        var txtGameId: TextView = findViewById(R.id.txt_game_id) //TODO maybe pull UI elements into another method
+        var txtGameId: TextView = findViewById(R.id.txt_game_id)
         txtGameId.text = "Game #: $gameId"
 
         firebaseHelper = FirebaseHelper(gameId)
 
-        firebaseHelper.createGame(gameId, hostName) // TODO enter a host name
+        firebaseHelper.createGame(hostName)
         firebaseHelper.joinGame(gameId, hostName)
-
-        FirebaseMessaging.getInstance().subscribeToTopic(gameId)
-                .addOnCompleteListener { task ->
-                    var msg = getString(R.string.msg_subscribed)
-                    if (!task.isSuccessful) {
-                        msg = getString(R.string.msg_subscribe_failed)
-                    }
-                    Log.d("JoinLobby" , msg)
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
-                }
-
 
         playerListInit()
     }

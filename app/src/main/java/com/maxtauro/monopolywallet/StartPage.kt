@@ -7,26 +7,35 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.util.TaskHelper
 
+/**
+ * TODO add authoring, date, and desc
+ */
 class StartPage : AppCompatActivity() {
 
     val dialogJoinGame = DialogFragmentJoinGame()
     val dialogCreateGame = DialogFragmentCreateGame()
 
+    private lateinit var auth: FirebaseAuth
     private lateinit var firebaseHelper : FirebaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        auth = FirebaseAuth.getInstance()
+        signInToFirebaseAnonymously()
+
         setupButtons()
 
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true) //TODO move this into game
+        FirebaseMessaging.getInstance().isAutoInitEnabled = true //TODO move this into game
 
     }
 
@@ -72,12 +81,22 @@ class StartPage : AppCompatActivity() {
         var gameRef = firebaseHelper.databaseRef.child(gameId)
 
         gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            //TODO Tidy this up
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if(dataSnapshot!!.exists()) {
+
+                //TODO get these ref paths from enum, create a util class that builds the path (builder pattern)
+                val isGameActive = (dataSnapshot.child("gameInfo").child("gameActive").value ?: false) as Boolean
+
+                if(dataSnapshot.exists() && !isGameActive) {
 
                             playerLobbyIntent.putExtra("playerName", playerName) // TODO have the name arg be from some enum
                             playerLobbyIntent.putExtra("gameId", gameId)
                             startActivity(playerLobbyIntent)
+                        }
+                        else if (isGameActive) {
+                            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+                            //TODO add toast like pop up to explain that the game is active and cannot be joined
+                            Log.e("DialogFragment", "Cannot join active game")
                         }
                         else {
                             dialogJoinGame.show(supportFragmentManager, "join game dialog")
@@ -89,4 +108,23 @@ class StartPage : AppCompatActivity() {
         })
     }
 
+    fun signInToFirebaseAnonymously() {
+
+        auth.signInAnonymously()
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInAnonymously:success")
+                    val user = auth.currentUser
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInAnonymously:failure", task.exception)
+                    TODO("HANDLE FAILED SIGNIN (note: double check that gapps is installed on VM")
+                }
+            }
+    }
+
+    companion object {
+        private const val TAG = "StartPage"
+    }
 }
