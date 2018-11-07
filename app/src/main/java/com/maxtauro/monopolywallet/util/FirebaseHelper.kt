@@ -22,12 +22,10 @@ import java.util.concurrent.ExecutionException
 
 class FirebaseHelper(val gameId: String) {
 
-    //Notification Utils
+    //Utils
     var notificationUtil = FirebaseNotificationUtil()
+    var firebaseReferenceUtil: FirebaseReferenceUtil = FirebaseReferenceUtil()
 
-    // Database
-    var database = FirebaseDatabase.getInstance()
-    var databaseRef = database.reference
 
     //References
     var gameRef: DatabaseReference
@@ -38,9 +36,9 @@ class FirebaseHelper(val gameId: String) {
     var auth = FirebaseAuth.getInstance()
 
     init {
-        gameRef = databaseRef.child(gameId)
-        playerListRef = gameRef.child("playerList")
-        hostRef = gameRef.child("host")
+        gameRef = firebaseReferenceUtil.databaseRef.child(gameId)
+        playerListRef = gameRef.child(FirebaseReferenceConstants.PLAYER_LIST_NODE_KEY)
+        hostRef = gameRef.child(firebaseReferenceUtil.getHostRef())
     }
 
     //TODO rename this function (or refactor so it makes more sense
@@ -65,7 +63,7 @@ class FirebaseHelper(val gameId: String) {
     fun gameIdExists(gameId : String): Boolean {
 
         var gameIdExists = true
-        var gameRef = databaseRef.child(gameId)
+        var gameRef = firebaseReferenceUtil.databaseRef.child(gameId)
 
         gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -78,11 +76,12 @@ class FirebaseHelper(val gameId: String) {
     }
 
     fun startGame() {
-        gameRef.child("gameInfo/gameActive").setValue(true) //TODO put the path string in some enum
+        val gameActivePath = firebaseReferenceUtil.getGameActivePath()
+        gameRef.child(gameActivePath).setValue(true)
     }
 
     fun deleteGame() {
-        databaseRef.child(gameId).removeValue()
+        firebaseReferenceUtil.databaseRef.child(gameId).removeValue()
     }
 
     fun leaveGame(playerName: String) {
