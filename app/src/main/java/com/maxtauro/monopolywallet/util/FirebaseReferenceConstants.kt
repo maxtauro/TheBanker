@@ -11,6 +11,7 @@ open class FirebaseReferenceConstants {
     companion object {
 
         const val PLAYER_LIST_NODE_KEY = "playerList"
+        const val PLAYER_BALANCE_NODE_KEY = "playerBalance"
         const val GAME_INFO_NODE_KEY = "gameInfo"
 
         const val GAME_ACTIVE_NODE_KEY = "gameActive"

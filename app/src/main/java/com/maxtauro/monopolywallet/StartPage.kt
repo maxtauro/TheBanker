@@ -42,7 +42,12 @@ class StartPage : AppCompatActivity() {
     private fun setupButtons() {
         val btnJoin = findViewById<Button>(R.id.join_button)
         btnJoin.setOnClickListener {
-            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+//            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+
+            //TODO REMOVE THIS, TEMP FOR MAKING UI
+            val tempHostIntent = Intent(this, JoinGame::class.java)
+            tempHostIntent.putExtra("gameId", "7988de")
+            startActivity(tempHostIntent)
         }
 
         val btnStart = findViewById<Button>(R.id.start_button)
@@ -50,7 +55,7 @@ class StartPage : AppCompatActivity() {
            // dialogCreateGame.show(supportFragmentManager, "create game dialog")
 
             //TODO REMOVE THIS, TEMP FOR MAKING UI
-            val tempHostIntent = Intent(this, JoinGame::class.java)
+            val tempHostIntent = Intent(this, HostGame::class.java)
             tempHostIntent.putExtra("gameId", "7988de")
             startActivity(tempHostIntent)
         }

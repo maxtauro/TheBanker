@@ -4,10 +4,10 @@
 
     <!--[START] UI Labels String resource -->
 
-
     <!--General UI -->
     <string name="game_id">Game Id:</string>
     <string name="cancel_button_label">Cancel</string>
+    <string name="txt_player_balance">Balance:</string>
 
     <!--Start Page-->
     <string name="create_game_button_label">Create Game</string>
@@ -17,7 +17,6 @@
     <string name="game_id_hint">Game Id</string>
     <string name="nickname_input_hint">Nickname</string>
     <string name="join_lobby_leave_string">Leave</string>
-
 
     <!--Host Lobby-->
     <string name="host_lobby_start_button_string">Start</string>
@@ -47,7 +46,6 @@
     <!--[START] Input Validation Responses-->
     <string name="invalid_name_msg">"Invalid Player Name"</string>
     <string name="invalid_game_id_format_msg">"Game ID consists of 6 alphanumeric chars"</string>
-    <string name="txt_player_balance">Balance:</string>
     <!--[END] Input Validation Responses-->
 
 

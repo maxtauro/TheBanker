@@ -1,8 +1,6 @@
 package com.maxtauro.monopolywallet.util
 
 import android.content.Intent
-import com.google.android.gms.tasks.TaskCompletionSource
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
@@ -13,7 +11,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.maxtauro.monopolywallet.GameDao
 import com.maxtauro.monopolywallet.HostGame
 import com.maxtauro.monopolywallet.JoinGame
-import java.util.concurrent.ExecutionException
 
 
 /**
@@ -24,8 +21,7 @@ class FirebaseHelper(val gameId: String) {
 
     //Utils
     var notificationUtil = FirebaseNotificationUtil()
-    var firebaseReferenceUtil: FirebaseReferenceUtil = FirebaseReferenceUtil()
-
+    private lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
 
     //References
     var gameRef: DatabaseReference
@@ -36,9 +32,10 @@ class FirebaseHelper(val gameId: String) {
     var auth = FirebaseAuth.getInstance()
 
     init {
+        firebaseReferenceUtil = FirebaseReferenceUtil(gameId)
         gameRef = firebaseReferenceUtil.databaseRef.child(gameId)
         playerListRef = gameRef.child(FirebaseReferenceConstants.PLAYER_LIST_NODE_KEY)
-        hostRef = gameRef.child(firebaseReferenceUtil.getHostRef())
+        hostRef = gameRef.child(firebaseReferenceUtil.getHostPath())
     }
 
     //TODO rename this function (or refactor so it makes more sense
