@@ -50,7 +50,7 @@ class StartPage : AppCompatActivity() {
            // dialogCreateGame.show(supportFragmentManager, "create game dialog")
 
             //TODO REMOVE THIS, TEMP FOR MAKING UI
-            val tempHostIntent = Intent(this, HostGame::class.java)
+            val tempHostIntent = Intent(this, JoinGame::class.java)
             tempHostIntent.putExtra("gameId", "7988de")
             startActivity(tempHostIntent)
         }

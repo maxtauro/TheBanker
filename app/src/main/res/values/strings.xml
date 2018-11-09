@@ -3,14 +3,33 @@
     <string name="action_settings">Settings</string>
 
     <!--[START] UI Labels String resource -->
+
+
+    <!--General UI -->
+    <string name="game_id">Game Id:</string>
+    <string name="cancel_button_label">Cancel</string>
+
+    <!--Start Page-->
     <string name="create_game_button_label">Create Game</string>
     <string name="join_game_button_label">Join game</string>
-    <string name="game_id">Game Id:</string>
-    <string name="host_lobby_start_button_string">Start</string>
-    <string name="cancel_button_label">Cancel</string>
+
+    <!--Start Page Dialogs-->
     <string name="game_id_hint">Game Id</string>
     <string name="nickname_input_hint">Nickname</string>
     <string name="join_lobby_leave_string">Leave</string>
+
+
+    <!--Host Lobby-->
+    <string name="host_lobby_start_button_string">Start</string>
+
+    <!-- Host Game -->
+    <string name="host_game_get_money_from_bank_btn_label">Get from bank</string>
+    <string name="host_game_pay_bank_btn_label">Pay Bank</string>
+
+    <!-- Join Game -->
+    <string name="join_game_pay_bank_button">Pay Bank</string>
+    <string name="join_game_request_from_bank_label">Request Money From Bank</string>
+
     <!--[END] UI String resource -->
 
     <!--[START] Subscription Log Message String Resources  -->
@@ -29,8 +48,6 @@
     <string name="invalid_name_msg">"Invalid Player Name"</string>
     <string name="invalid_game_id_format_msg">"Game ID consists of 6 alphanumeric chars"</string>
     <string name="txt_player_balance">Balance:</string>
-    <string name="host_game_get_money_from_bank_btn_label">Get from bank</string>
-    <string name="host_game_pay_bank_btn_label">Pay Bank</string>
     <!--[END] Input Validation Responses-->
 
 
