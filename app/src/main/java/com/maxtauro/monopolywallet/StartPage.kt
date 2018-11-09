@@ -47,7 +47,12 @@ class StartPage : AppCompatActivity() {
 
         val btnStart = findViewById<Button>(R.id.start_button)
         btnStart.setOnClickListener {
-            dialogCreateGame.show(supportFragmentManager, "create game dialog")
+           // dialogCreateGame.show(supportFragmentManager, "create game dialog")
+
+            //TODO REMOVE THIS, TEMP FOR MAKING UI
+            val tempHostIntent = Intent(this, HostGame::class.java)
+            tempHostIntent.putExtra("gameId", "7988de")
+            startActivity(tempHostIntent)
         }
     }
 
@@ -78,7 +83,7 @@ class StartPage : AppCompatActivity() {
         val playerLobbyIntent = Intent(this, JoinLobby::class.java)
 
         firebaseHelper = FirebaseHelper(gameId)
-        var gameRef = firebaseHelper.databaseRef.child(gameId)
+        var gameRef = firebaseHelper.gameRef
 
         gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
             //TODO Tidy this up

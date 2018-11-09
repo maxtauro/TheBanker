@@ -20,9 +20,17 @@
     <string name="fcm_message">FCM Message</string>
     <!--[END] Subscription Log Message String Resources -->
 
+    <!--[START] Notification Channel Strings  -->
+    <string name="default_notification_channel_id">default_notification_channel_id</string>
+    <string name="default_notification_channel_name">default_notification_channel_name</string>
+    <!--[END] Notification Channel Strings -->
+
     <!--[START] Input Validation Responses-->
     <string name="invalid_name_msg">"Invalid Player Name"</string>
     <string name="invalid_game_id_format_msg">"Game ID consists of 6 alphanumeric chars"</string>
+    <string name="txt_player_balance">Balance:</string>
+    <string name="host_game_get_money_from_bank_btn_label">Get from bank</string>
+    <string name="host_game_pay_bank_btn_label">Pay Bank</string>
     <!--[END] Input Validation Responses-->
 
 
