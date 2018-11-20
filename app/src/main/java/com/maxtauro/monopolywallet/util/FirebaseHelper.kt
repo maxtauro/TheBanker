@@ -20,11 +20,13 @@ import com.maxtauro.monopolywallet.JoinGame
 class FirebaseHelper(val gameId: String) {
 
     //Utils
-    var notificationUtil = FirebaseNotificationUtil()
+    var notificationUtil = FirebaseNotificationUtil(gameId)
     private lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
 
     //References
+    val databaseReference = FirebaseDatabase.getInstance().reference
     var gameRef: DatabaseReference
+    var hostNotificationListRef: DatabaseReference
     var playerListRef: DatabaseReference
     var hostRef: DatabaseReference
 
@@ -34,6 +36,7 @@ class FirebaseHelper(val gameId: String) {
     init {
         firebaseReferenceUtil = FirebaseReferenceUtil(gameId)
         gameRef = firebaseReferenceUtil.databaseRef.child(gameId)
+        hostNotificationListRef = gameRef.child(FirebaseReferenceConstants.HOST_NOTIFICATION_LIST_KEY)
         playerListRef = gameRef.child(FirebaseReferenceConstants.PLAYER_LIST_NODE_KEY)
         hostRef = gameRef.child(firebaseReferenceUtil.getHostPath())
     }
@@ -43,17 +46,14 @@ class FirebaseHelper(val gameId: String) {
 
         var game = GameDao(auth.uid, gameId)
 
-        gameRef.child("gameInfo").setValue(game) //TODO have child be player or host object
-
-        var player = Player(auth.uid!!, hostName)
-        playerListRef.child(player.playerName).setValue(player)
+        gameRef.child("gameInfo").setValue(game)
     }
 
     fun joinGame(gameId : String, playerName : String) {
 
         if (gameIdExists(gameId)) {
-            var player = Player(auth.uid!!, playerName)
-            playerListRef.child(player.playerName).setValue(player)
+            val player = Player(auth.uid!!, playerName) //TODO deal w/ non-null assertion better
+            playerListRef.child(auth.uid!!).setValue(player)
         }
     }
 
@@ -74,7 +74,7 @@ class FirebaseHelper(val gameId: String) {
 
     fun startGame() {
         val gameActivePath = firebaseReferenceUtil.getGameActivePath()
-        gameRef.child(gameActivePath).setValue(true)
+        databaseReference.child(gameActivePath).setValue(true)
     }
 
     fun deleteGame() {
@@ -83,6 +83,10 @@ class FirebaseHelper(val gameId: String) {
 
     fun leaveGame(playerName: String) {
         playerListRef.child(playerName).removeValue()
+    }
+
+    fun createPaymentRequest(paymentRequest: HashMap<String, Any>) {
+        hostNotificationListRef.push().setValue(paymentRequest)
     }
 
     companion object {

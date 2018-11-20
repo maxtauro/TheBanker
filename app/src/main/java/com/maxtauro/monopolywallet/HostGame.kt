@@ -1,12 +1,13 @@
 package com.maxtauro.monopolywallet
 
 import android.os.Bundle
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -17,6 +18,9 @@ import com.google.firebase.database.ValueEventListener
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
+import com.maxtauro.monopolywallet.util.NotificationTypes.HostNotification
+import kotlinx.android.synthetic.main.activity_host_game.*
+import kotlinx.android.synthetic.main.app_bar_host_game.*
 
 /**
  *  Activity for the Game from the Host user
@@ -28,15 +32,27 @@ class HostGame :  AppCompatActivity() {
     lateinit var firebaseHelper: FirebaseHelper
     lateinit var auth: FirebaseAuth
 
-    //RecyclerView
-    lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
-    lateinit var listPlayersRecyclerView: RecyclerView
-    lateinit var layoutManager: RecyclerView.LayoutManager
+    //Player RecyclerView
+    lateinit var playerListAdapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
+    lateinit var playerListRecyclerView: RecyclerView
+    lateinit var playerListlayoutManager: RecyclerView.LayoutManager
+
+    //Host Notifications RecyelerView
+    lateinit var hostNotificationListAdapter: FirebaseRecyclerAdapter<HostNotification, HostNotificationListViewHolder>
+    lateinit var hostNotificationListRecyclerView: RecyclerView
+    lateinit var hostNotificationListLayoutManager: RecyclerView.LayoutManager
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_game)
 
+
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
     }
 
 
@@ -46,9 +62,21 @@ class HostGame :  AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         setupUtils()
-//        setupButtons()
+        setupButtons()
         setupGame()
 //        setupNotificationService()
+    }
+
+    private fun setupButtons() {
+        val btnCancel = findViewById<Button>(R.id.btn_get_from_bank)
+        btnCancel.setOnClickListener {
+
+        }
+
+        val btnStart = findViewById<Button>(R.id.btn_pay_bank)
+        btnStart.setOnClickListener {
+            TODO("IMPLEMENT BANK PAYMENT AS THE HOST")
+        }
     }
 
     private fun setupUtils() {
@@ -79,22 +107,68 @@ class HostGame :  AppCompatActivity() {
 
         playerBalanceRef.addValueEventListener(balanceListener)
 
-        playerListInit()
 
+        initRecyclerViews()
+    }
+
+    private fun initRecyclerViews() {
+        playerListInit()
+        hostNotificationListInit()
+    }
+
+    private fun createLayoutManager(): RecyclerView.LayoutManager {
+
+        var layoutManager = LinearLayoutManager(this)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        return layoutManager
+    }
+
+    private fun hostNotificationListInit() {
+        hostNotificationListRecyclerView = findViewById<RecyclerView>(R.id.host_notification_list_recycler)
+        hostNotificationListRecyclerView.setHasFixedSize(true)
+
+        hostNotificationListLayoutManager = createLayoutManager()
+        hostNotificationListRecyclerView.layoutManager = hostNotificationListLayoutManager
+
+        val options = FirebaseRecyclerOptions.Builder<HostNotification>()
+                .setQuery(firebaseHelper.hostNotificationListRef, HostNotification::class.java)
+                .build()
+
+        hostNotificationListAdapter = object : FirebaseRecyclerAdapter<HostNotification, HostNotificationListViewHolder>(options) {
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HostNotificationListViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.list_holder_host_notifications, parent, false)
+
+                return HostNotificationListViewHolder(view)
+            }
+
+            override fun onBindViewHolder(holder: HostNotificationListViewHolder, position: Int, notification: HostNotification) {
+                holder.hostNotification = notification
+
+                holder.txt_amount.text = notification.amount.toString()
+                holder.txt_notification_type.text = notification.NOTIFICATION_TYPE.toString()
+                holder.txt_player_id.text = notification.playerId
+
+            }
+        }
+
+        hostNotificationListAdapter.startListening()
+        hostNotificationListRecyclerView.adapter = hostNotificationListAdapter
     }
 
     private fun playerListInit() {
+        playerListRecyclerView = findViewById<RecyclerView>(R.id.playerList)
+        playerListRecyclerView.setHasFixedSize(true)
 
-        listPlayersRecyclerView = findViewById<RecyclerView>(R.id.playerList)
-        listPlayersRecyclerView.setHasFixedSize(true)
-        layoutManager = LinearLayoutManager(this)
-        listPlayersRecyclerView.layoutManager = layoutManager
+        playerListlayoutManager = createLayoutManager()
+        playerListRecyclerView.layoutManager = playerListlayoutManager
 
         val options = FirebaseRecyclerOptions.Builder<Player>()
                 .setQuery(firebaseHelper.playerListRef, Player::class.java)
                 .build()
 
-        adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
+        playerListAdapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerListViewHolder {
                 val view = LayoutInflater.from(parent.context)
@@ -105,12 +179,11 @@ class HostGame :  AppCompatActivity() {
 
             override fun onBindViewHolder(holder: PlayerListViewHolder, position: Int, player: Player) {
                 holder.txtPlayerName.text = player.playerName
-//                holder.root.setOnClickListener(View.OnClickListener { Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show() })
             }
         }
 
-        adapter.startListening()
-        listPlayersRecyclerView.adapter = adapter
+        playerListAdapter.startListening()
+        playerListRecyclerView.adapter = playerListAdapter
     }
 
 

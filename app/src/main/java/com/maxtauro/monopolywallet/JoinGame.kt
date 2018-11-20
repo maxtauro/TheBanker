@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPayBank
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
@@ -44,9 +46,26 @@ class JoinGame :  AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
 
         setupUtils()
-//        setupButtons()
+        setupButtons()
         setupGame()
 //        setupNotificationService()
+    }
+
+    private fun setupButtons() {
+        val btnCancel = findViewById<Button>(R.id.btn_get_from_bank)
+        btnCancel.setOnClickListener {
+
+        }
+
+        val btnStart = findViewById<Button>(R.id.btn_pay_bank)
+        btnStart.setOnClickListener {
+            val dialogFragmentPayBank = DialogFragmentPayBank()
+
+            val bundle = Bundle()
+            bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+            dialogFragmentPayBank.arguments = bundle
+            dialogFragmentPayBank.show(supportFragmentManager, "DialogFragmentPayBank")
+        }
     }
 
     private fun setupGame() {

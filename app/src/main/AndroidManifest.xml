@@ -20,10 +20,18 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".HostLobby" />
-        <activity android:name=".JoinLobby" />
-        <activity android:name=".HostGame" />
-        <activity android:name=".JoinGame" />
+        <activity
+            android:name=".HostLobby"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".JoinLobby"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".HostGame"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".JoinGame"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
 
         <service
