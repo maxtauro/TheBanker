@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
-import com.maxtauro.monopolywallet.util.NotificationTypes.HostNotification
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 import kotlinx.android.synthetic.main.activity_host_game.*
 import kotlinx.android.synthetic.main.app_bar_host_game.*
 
@@ -37,10 +37,10 @@ class HostGame :  AppCompatActivity() {
     lateinit var playerListRecyclerView: RecyclerView
     lateinit var playerListlayoutManager: RecyclerView.LayoutManager
 
-    //Host Notifications RecyelerView
-    lateinit var hostNotificationListAdapter: FirebaseRecyclerAdapter<HostNotification, HostNotificationListViewHolder>
-    lateinit var hostNotificationListRecyclerView: RecyclerView
-    lateinit var hostNotificationListLayoutManager: RecyclerView.LayoutManager
+    //Notifications RecyelerView
+    lateinit var playerGameNotificationsListAdapter: FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>
+    lateinit var playerGameNotificationListRecyclerView: RecyclerView
+    lateinit var playerGameNotificationListLayoutManager: RecyclerView.LayoutManager
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,7 +111,7 @@ class HostGame :  AppCompatActivity() {
 
     private fun initRecyclerViews() {
         playerListInit()
-        hostNotificationListInit()
+        notificationListInit()
     }
 
     private fun createLayoutManager(): RecyclerView.LayoutManager {
@@ -121,28 +121,28 @@ class HostGame :  AppCompatActivity() {
         return layoutManager
     }
 
-    private fun hostNotificationListInit() {
-        hostNotificationListRecyclerView = findViewById<RecyclerView>(R.id.host_notification_list_recycler)
-        hostNotificationListRecyclerView.setHasFixedSize(true)
+    private fun notificationListInit() {
+        playerGameNotificationListRecyclerView = findViewById<RecyclerView>(R.id.host_notification_list_recycler)
+        playerGameNotificationListRecyclerView.setHasFixedSize(true)
 
-        hostNotificationListLayoutManager = createLayoutManager()
-        hostNotificationListRecyclerView.layoutManager = hostNotificationListLayoutManager
+        playerGameNotificationListLayoutManager = createLayoutManager()
+        playerGameNotificationListRecyclerView.layoutManager = playerGameNotificationListLayoutManager
 
-        val options = FirebaseRecyclerOptions.Builder<HostNotification>()
-                .setQuery(firebaseHelper.hostNotificationListRef, HostNotification::class.java)
+        val options = FirebaseRecyclerOptions.Builder<PlayerGameNotification>()
+                .setQuery(firebaseReferenceUtil.getPlayerNotificationRef(auth.uid!!), PlayerGameNotification::class.java)
                 .build()
 
-        hostNotificationListAdapter = object : FirebaseRecyclerAdapter<HostNotification, HostNotificationListViewHolder>(options) {
+        playerGameNotificationsListAdapter = object : FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>(options) {
 
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HostNotificationListViewHolder {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerGameNotificationsListViewHolder {
                 val view = LayoutInflater.from(parent.context)
-                        .inflate(R.layout.list_holder_host_notifications, parent, false)
+                        .inflate(R.layout.list_holder_user_notifications, parent, false)
 
-                return HostNotificationListViewHolder(view)
+                return PlayerGameNotificationsListViewHolder(view)
             }
 
-            override fun onBindViewHolder(holder: HostNotificationListViewHolder, position: Int, notification: HostNotification) {
-                holder.hostNotification = notification
+            override fun onBindViewHolder(holder: PlayerGameNotificationsListViewHolder, position: Int, notification: PlayerGameNotification) {
+                holder.playerGameNotifications = notification
 
                 holder.txt_amount.text = notification.amount.toString()
                 holder.txt_notification_type.text = notification.NOTIFICATION_TYPE.toString()
@@ -150,8 +150,8 @@ class HostGame :  AppCompatActivity() {
             }
         }
 
-        hostNotificationListAdapter.startListening()
-        hostNotificationListRecyclerView.adapter = hostNotificationListAdapter
+        playerGameNotificationsListAdapter.startListening()
+        playerGameNotificationListRecyclerView.adapter = playerGameNotificationsListAdapter
     }
 
     private fun playerListInit() {

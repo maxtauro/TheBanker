@@ -1,19 +1,18 @@
 package com.maxtauro.monopolywallet
 
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.View
 import android.widget.TextView
-import com.maxtauro.monopolywallet.util.HostNotificationUtil
-import com.maxtauro.monopolywallet.util.NotificationTypes.HostNotification
+import com.maxtauro.monopolywallet.util.PlayerGameNotificationUtil
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotifications
 
-class HostNotificationListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
+class PlayerGameNotificationsListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
 
     lateinit var txt_player_id: TextView
     lateinit var txt_amount: TextView
     lateinit var txt_notification_type: TextView
 
-    lateinit var hostNotification: HostNotification
+    lateinit var playerGameNotifications: PlayerGameNotifications
 
     constructor(itemView : View) : super(itemView) {
 
@@ -26,6 +25,6 @@ class HostNotificationListViewHolder : RecyclerView.ViewHolder, View.OnClickList
     }
 
     override fun onClick(v: View?) {
-        HostNotificationUtil.confirmNotification(hostNotification)
+        PlayerGameNotificationUtil.confirmNotification(playerGameNotifications)
     }
 }
