@@ -58,6 +58,22 @@ class FirebaseReferenceUtil(val gameId: String): FirebaseReferenceConstants() {
         return referenceBuilder.buildPath()
     }
 
+    fun getPlayerNotificationPath(playerId: String): String {
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_NOTIFICATION_LIST_KEY)
+
+        return referenceBuilder.buildPath()
+    }
+
+    fun getPlayerNotificationRef(playerId: String): DatabaseReference {
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_NOTIFICATION_LIST_KEY)
+
+        return referenceBuilder.buildRef()
+    }
+
 
     private class ReferenceBuilder(val gameId: String, val databaseReference: DatabaseReference) {
 

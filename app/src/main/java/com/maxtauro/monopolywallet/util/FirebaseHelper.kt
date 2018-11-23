@@ -7,8 +7,8 @@ import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.GameDao
 import com.maxtauro.monopolywallet.HostGame
 import com.maxtauro.monopolywallet.JoinGame
-import com.maxtauro.monopolywallet.util.NotificationTypes.HostNotification
-
+import com.maxtauro.monopolywallet.util.NotificationTypes.PayBankIntentNotification
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 
 /**
  * A helper class for using firebase realtime database.
@@ -24,7 +24,6 @@ class FirebaseHelper(val gameId: String) {
     //References
     val databaseReference = FirebaseDatabase.getInstance().reference
     var gameRef: DatabaseReference
-    var hostNotificationListRef: DatabaseReference
     var playerListRef: DatabaseReference
     var hostRef: DatabaseReference
 
@@ -33,7 +32,6 @@ class FirebaseHelper(val gameId: String) {
 
     init {
         gameRef = firebaseReferenceUtil.databaseRef.child(gameId)
-        hostNotificationListRef = gameRef.child(FirebaseReferenceConstants.HOST_NOTIFICATION_LIST_KEY)
         playerListRef = gameRef.child(FirebaseReferenceConstants.PLAYER_LIST_NODE_KEY)
         hostRef = gameRef.child(firebaseReferenceUtil.getHostPath())
     }
@@ -81,16 +79,25 @@ class FirebaseHelper(val gameId: String) {
         playerListRef.child(playerName).removeValue()
     }
 
+    /**
+     * TODO if this method doesn't work because of getGameHostUid, test if it works when called
+     * from the NotificationService (that class is on a different thread), if it works in NotificationService
+     * indicate somewhere (or make another helper class) that getGameHostUid can only be called from that service
+     * (and createPaymentRequest will have to be called from that thread only as well)
+     * */
     fun createPaymentRequest(paymentRequest: HashMap<String, Any>) {
 
-        val notificationRef = hostNotificationListRef.push()
+        val playerId = paymentRequest["playerId"] as String
+        val hostId = getGameHostUid(gameId)
+        val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(hostId).push()
+
         notificationRef.setValue(paymentRequest)
 
         val requestKey: String = notificationRef.key!!
-        hostNotificationListRef.child(requestKey).child(FirebaseReferenceConstants.HOST_NOTIFICATION_KEY_KEY).setValue(requestKey)
+        notificationRef.child(requestKey).child(FirebaseReferenceConstants.PLAYER_NOTIFICATION_LIST_KEY).setValue(requestKey)
     }
 
-    fun processBankPayment(paymentNotification: HostNotification, creditDebit: BankTransactionEnums) {
+    fun processBankPayment(paymentNotification: PayBankIntentNotification, creditDebit: BankTransactionEnums) {
 
         val playerId = paymentNotification.playerId
         val notificationKey = paymentNotification.notificationKey
@@ -98,10 +105,9 @@ class FirebaseHelper(val gameId: String) {
 
         val playerBalanceRef = firebaseReferenceUtil.getPlayerBalanceRef(playerId)
 
-
         playerBalanceRef.runTransaction(object : Transaction.Handler {
             override fun onComplete(p0: DatabaseError?, p1: Boolean, p2: DataSnapshot?) {
-                removeHostNotification(notificationKey)
+                removeHostNotification(notificationKey, playerId)
             }
 
             override fun doTransaction(balance: MutableData): Transaction.Result {
@@ -122,10 +128,13 @@ class FirebaseHelper(val gameId: String) {
 
         })
 
-        }
+    }
 
-    private fun removeHostNotification(notificationKey: String) {
-        hostNotificationListRef.child(notificationKey)
+    private fun removeHostNotification(notificationKey: String, playerId: String) {
+
+        val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(playerId).child(notificationKey)
+
+        notificationRef.child(notificationKey)
                 .removeValue()
                 .addOnCompleteListener { task ->
                     if (!task.isSuccessful) {

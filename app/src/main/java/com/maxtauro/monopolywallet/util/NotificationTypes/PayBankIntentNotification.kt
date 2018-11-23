@@ -5,4 +5,4 @@ package com.maxtauro.monopolywallet.util.NotificationTypes
  */
 
 class PayBankIntentNotification(gameId : String, playerId: String, paymentAmount: Int):
-        HostNotification("", playerId, paymentAmount, gameId, StandardNotifications.PAY_BANK_INTENT_NOTIFICATION) {}
+        PlayerGameNotification("", playerId, paymentAmount, gameId, StandardNotifications.PAY_BANK_INTENT_NOTIFICATION) {}

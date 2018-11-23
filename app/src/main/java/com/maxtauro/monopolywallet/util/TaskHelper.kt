@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutionException
 /**
  *  TODO Add authoring and date
  */
+@Deprecated("Do we ever need to use this class?", ReplaceWith("",""), DeprecationLevel.WARNING)
 class TaskHelper {
 
     fun <T> getValueSynchronously(databaseRef: DatabaseReference): T {
