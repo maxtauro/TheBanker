@@ -43,7 +43,6 @@ class HostGame :  AppCompatActivity() {
     lateinit var hostNotificationListLayoutManager: RecyclerView.LayoutManager
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_host_game)
@@ -60,7 +59,6 @@ class HostGame :  AppCompatActivity() {
         super.onStart()
 
         auth = FirebaseAuth.getInstance()
-
         setupUtils()
         setupButtons()
         setupGame()
@@ -148,8 +146,7 @@ class HostGame :  AppCompatActivity() {
 
                 holder.txt_amount.text = notification.amount.toString()
                 holder.txt_notification_type.text = notification.NOTIFICATION_TYPE.toString()
-                holder.txt_player_id.text = notification.playerId
-
+                holder.txt_player_id.text = notification.playerId //TODO, actual user name needs to be a parameter
             }
         }
 

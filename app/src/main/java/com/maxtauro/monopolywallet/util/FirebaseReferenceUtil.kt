@@ -45,6 +45,19 @@ class FirebaseReferenceUtil(val gameId: String): FirebaseReferenceConstants() {
         return referenceBuilder.buildRef()
     }
 
+    fun getPlayerBalancePath(playerId: String): String {
+
+        if (playerId == null) {
+            throw NullPointerException("Could not get player ID") //TODO implement an error handling framework
+        }
+
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_BALANCE_NODE_KEY)
+
+        return referenceBuilder.buildPath()
+    }
+
 
     private class ReferenceBuilder(val gameId: String, val databaseReference: DatabaseReference) {
 

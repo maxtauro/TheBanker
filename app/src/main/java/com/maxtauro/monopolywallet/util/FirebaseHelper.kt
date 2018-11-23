@@ -2,26 +2,24 @@ package com.maxtauro.monopolywallet.util
 
 import android.content.Intent
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import com.maxtauro.monopolywallet.Player
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.maxtauro.monopolywallet.GameDao
 import com.maxtauro.monopolywallet.HostGame
 import com.maxtauro.monopolywallet.JoinGame
+import com.maxtauro.monopolywallet.util.NotificationTypes.HostNotification
 
 
 /**
- * TODO add authoring, date, and desc
+ * A helper class for using firebase realtime database.
+ * Only interact with the Db from here unless ABSOLUTELY necessary
  */
 
 class FirebaseHelper(val gameId: String) {
 
     //Utils
     var notificationUtil = FirebaseNotificationUtil(gameId)
-    private lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
+    private var firebaseReferenceUtil: FirebaseReferenceUtil = FirebaseReferenceUtil(gameId)
 
     //References
     val databaseReference = FirebaseDatabase.getInstance().reference
@@ -34,7 +32,6 @@ class FirebaseHelper(val gameId: String) {
     var auth = FirebaseAuth.getInstance()
 
     init {
-        firebaseReferenceUtil = FirebaseReferenceUtil(gameId)
         gameRef = firebaseReferenceUtil.databaseRef.child(gameId)
         hostNotificationListRef = gameRef.child(FirebaseReferenceConstants.HOST_NOTIFICATION_LIST_KEY)
         playerListRef = gameRef.child(FirebaseReferenceConstants.PLAYER_LIST_NODE_KEY)
@@ -45,7 +42,6 @@ class FirebaseHelper(val gameId: String) {
     fun createGame(hostName: String) {
 
         var game = GameDao(auth.uid, gameId)
-
         gameRef.child("gameInfo").setValue(game)
     }
 
@@ -86,10 +82,61 @@ class FirebaseHelper(val gameId: String) {
     }
 
     fun createPaymentRequest(paymentRequest: HashMap<String, Any>) {
-        hostNotificationListRef.push().setValue(paymentRequest)
+
+        val notificationRef = hostNotificationListRef.push()
+        notificationRef.setValue(paymentRequest)
+
+        val requestKey: String = notificationRef.key!!
+        hostNotificationListRef.child(requestKey).child(FirebaseReferenceConstants.HOST_NOTIFICATION_KEY_KEY).setValue(requestKey)
+    }
+
+    fun processBankPayment(paymentNotification: HostNotification, creditDebit: BankTransactionEnums) {
+
+        val playerId = paymentNotification.playerId
+        val notificationKey = paymentNotification.notificationKey
+        val amount = paymentNotification.amount
+
+        val playerBalanceRef = firebaseReferenceUtil.getPlayerBalanceRef(playerId)
+
+
+        playerBalanceRef.runTransaction(object : Transaction.Handler {
+            override fun onComplete(p0: DatabaseError?, p1: Boolean, p2: DataSnapshot?) {
+                removeHostNotification(notificationKey)
+            }
+
+            override fun doTransaction(balance: MutableData): Transaction.Result {
+
+                if (balance.value == null) {
+                    TODO("IMPLEMENT ERROR HANDLING")
+                    return Transaction.abort()
+                }
+
+                var newBalance: Long = if (creditDebit == BankTransactionEnums.DEBIT) {
+                    (balance.value as Long) - amount
+                }
+                else (balance.value as Long) + amount
+
+                balance.value = newBalance
+                return Transaction.success(balance)
+            }
+
+        })
+
+        }
+
+    private fun removeHostNotification(notificationKey: String) {
+        hostNotificationListRef.child(notificationKey)
+                .removeValue()
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        TODO("IMPLEMENT ERROR HANDLING")
+                    }
+                }
     }
 
     companion object {
+
+        private const val TAG = "FirebaseHelper"
 
         fun getGameHostUid(gameId: String): String {
 

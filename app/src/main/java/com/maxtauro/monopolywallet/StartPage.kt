@@ -17,7 +17,7 @@ import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentJoinGame
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 
 /**
- * TODO add authoring, date, and desc
+ * Starting Activity for the application
  */
 class StartPage : AppCompatActivity() {
 
@@ -43,12 +43,12 @@ class StartPage : AppCompatActivity() {
     private fun setupButtons() {
         val btnJoin = findViewById<Button>(R.id.join_button)
         btnJoin.setOnClickListener {
-            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+//            dialogJoinGame.show(supportFragmentManager, "join game dialog")
 
-//            //TODO REMOVE THIS, TEMP FOR MAKING UI
-//            val tempHostIntent = Intent(this, JoinGame::class.java)
-//            tempHostIntent.putExtra("gameId", "7988de")
-//            startActivity(tempHostIntent)
+            //TODO REMOVE THIS, TEMP FOR MAKING UI
+            val tempHostIntent = Intent(this, JoinGame::class.java)
+            tempHostIntent.putExtra("gameId", "f68d51")
+            startActivity(tempHostIntent)
         }
 
         val btnStart = findViewById<Button>(R.id.start_button)
@@ -130,7 +130,7 @@ class StartPage : AppCompatActivity() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInAnonymously:failure", task.exception)
-                    TODO("HANDLE FAILED SIGNIN (note: double check that gapps is installed on VM")
+                    TODO("HANDLE FAILED SIGNIN (note: double check that gapps is installed on VM)")
                 }
             }
     }

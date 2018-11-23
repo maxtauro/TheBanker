@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import com.maxtauro.monopolywallet.util.HostNotificationUtil
 import com.maxtauro.monopolywallet.util.NotificationTypes.HostNotification
 
 class HostNotificationListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
@@ -25,6 +26,6 @@ class HostNotificationListViewHolder : RecyclerView.ViewHolder, View.OnClickList
     }
 
     override fun onClick(v: View?) {
-        Log.d("HostNotificationList", "Click on notification")
+        HostNotificationUtil.confirmNotification(hostNotification)
     }
 }
