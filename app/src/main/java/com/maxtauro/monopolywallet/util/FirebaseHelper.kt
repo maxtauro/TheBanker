@@ -8,10 +8,11 @@ import com.maxtauro.monopolywallet.GameDao
 import com.maxtauro.monopolywallet.HostGame
 import com.maxtauro.monopolywallet.JoinGame
 import com.maxtauro.monopolywallet.util.NotificationTypes.PayBankIntentNotification
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 
 /**
  * A helper class for using firebase realtime database.
- * This should be the only place you interact with the db from here unless ABSOLUTELY necessary
+ * Only interact with the Db from here unless ABSOLUTELY necessary
  */
 
 class FirebaseHelper(val gameId: String) {

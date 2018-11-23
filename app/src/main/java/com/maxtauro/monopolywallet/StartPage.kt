@@ -12,16 +12,17 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentCreateGame
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentJoinGame
 import com.maxtauro.monopolywallet.util.FirebaseHelper
-import com.maxtauro.monopolywallet.util.TaskHelper
 
 /**
- * TODO add authoring, date, and desc
+ * Starting Activity for the application
  */
 class StartPage : AppCompatActivity() {
 
-    val dialogJoinGame = DialogFragmentJoinGame()
-    val dialogCreateGame = DialogFragmentCreateGame()
+    private val dialogJoinGame = DialogFragmentJoinGame()
+    private val dialogCreateGame = DialogFragmentCreateGame()
 
     private lateinit var auth: FirebaseAuth
     private lateinit var firebaseHelper : FirebaseHelper
@@ -42,12 +43,22 @@ class StartPage : AppCompatActivity() {
     private fun setupButtons() {
         val btnJoin = findViewById<Button>(R.id.join_button)
         btnJoin.setOnClickListener {
-            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+//            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+
+            //TODO REMOVE THIS, TEMP FOR MAKING UI
+            val tempHostIntent = Intent(this, JoinGame::class.java)
+            tempHostIntent.putExtra("gameId", "f68d51")
+            startActivity(tempHostIntent)
         }
 
         val btnStart = findViewById<Button>(R.id.start_button)
         btnStart.setOnClickListener {
-            dialogCreateGame.show(supportFragmentManager, "create game dialog")
+        //    dialogCreateGame.show(supportFragmentManager, "create game dialog")
+//
+            //TODO REMOVE THIS, TEMP FOR MAKING UI
+            val tempHostIntent = Intent(this, HostGame::class.java)
+            tempHostIntent.putExtra("gameId", "f68d51")
+            startActivity(tempHostIntent)
         }
     }
 
@@ -78,7 +89,7 @@ class StartPage : AppCompatActivity() {
         val playerLobbyIntent = Intent(this, JoinLobby::class.java)
 
         firebaseHelper = FirebaseHelper(gameId)
-        var gameRef = firebaseHelper.databaseRef.child(gameId)
+        var gameRef = firebaseHelper.gameRef
 
         gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
             //TODO Tidy this up
@@ -119,7 +130,7 @@ class StartPage : AppCompatActivity() {
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInAnonymously:failure", task.exception)
-                    TODO("HANDLE FAILED SIGNIN (note: double check that gapps is installed on VM")
+                    TODO("HANDLE FAILED SIGNIN (note: double check that gapps is installed on VM)")
                 }
             }
     }

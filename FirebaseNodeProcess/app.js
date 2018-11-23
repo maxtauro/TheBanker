@@ -34,16 +34,20 @@ var ref = admin.database().ref();
 function listenForNotificationRequests() {
     var requests = ref.child('notificationRequests');
     requests.on('child_added', function(requestSnapshot) {
-        var request = requestSnapshot.val();
+        var notification = requestSnapshot.val();
 
         function onNotificationSuccess() {
             requestSnapshot.ref.remove();
         }
 
-        if (request.NOTIFICATION_TYPE == 'START_GAME_NOTIFICATION') {
-            sendStartGameNotification(
-                request.gameId,
-                onNotificationSuccess);
+        var NOTIFICATION_TYPE = notification.NOTIFICATION_TYPE
+
+        if (NOTIFICATION_TYPE == 'START_GAME_NOTIFICATION') {
+            sendStartGameNotification(notification, onNotificationSuccess);
+        }
+
+        else if (NOTIFICATION_TYPE == 'PAY_BANK_INTENT_NOTIFICATION') {
+            sendPayBankIntentNotification(notification, onNotificationSuccess);
         }
 
         else {
@@ -55,7 +59,11 @@ function listenForNotificationRequests() {
     });
 };
 
-function sendStartGameNotification(gameId, onSuccess) {
+
+
+function sendStartGameNotification(notification, onSuccess) {
+
+    var gameId = notification.gameId
 
     console.log('sendStartGameNotification: Trying to send START_GAME_NOTIFICATION to ' + gameId);
 
@@ -91,6 +99,48 @@ function sendStartGameNotification(gameId, onSuccess) {
         });
 }
 
+function sendPayBankIntentNotification(notification, onSuccess) {
+
+    var gameId = notification.gameId;
+    var playerId = notification.playerId;
+    var paymentAmount = notification.paymentAmount;
+
+    console.log('sendStartGameNotification: Trying to send PAY_BANK_INTENT_NOTIFICATION to ' + gameId + '-Host');
+
+    request({
+        url: 'https://fcm.googleapis.com/fcm/send',
+        method: 'POST',
+        headers: {
+            'Content-Type' :' application/json',
+            'Authorization': 'key='+API_KEY
+        },
+
+        body: JSON.stringify({
+
+            data: {
+                "GAME_ID" : gameId,
+                "PLAYER_ID" : playerId,
+                "PAYMENT_AMOUNT" : paymentAmount
+            },
+            notification: {
+                body: 'PAY_BANK_INTENT_NOTIFICATION',
+            },
+            to : '/topics/' + gameId + '-Host'
+        })
+        },
+
+        function(error, response, body) {
+            if (error) { console.error(error); }
+                else if (response.statusCode >= 400) {
+                    console.error('HTTP Error: ' + response.statusCode+' - ' + response.statusMessage);
+                }
+                else {
+                    onSuccess();
+                    console.log('sendStartGameNotification: Successfully sent PAY_BANK_INTENT_NOTIFICATION notification');
+                }
+        });
+
+}
 
 function sendNotificationToUser(username, message, onSuccess) {
   request({

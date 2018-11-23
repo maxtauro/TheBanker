@@ -69,7 +69,7 @@ class HostLobby :  AppCompatActivity() {
         topicSubscriptionUtil.subscribeToTopic(personalTopic)
 
         // Subscribe To Game Host Topic
-        val hostTopic = ("$gameId Host").replace("\\s".toRegex(), "")
+        val hostTopic = "$gameId-Host"
         topicSubscriptionUtil.subscribeToTopic(hostTopic)
     }
 
@@ -89,16 +89,16 @@ class HostLobby :  AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        val btnCancel = findViewById<Button>(R.id.btn_cancel)
+        val btnCancel = findViewById<Button>(R.id.btn_pay_bank)
         btnCancel.setOnClickListener {
             firebaseHelper.deleteGame()
             finish()
         }
 
-        val btnStart = findViewById<Button>(R.id.btn_start)
+        val btnStart = findViewById<Button>(R.id.btn_get_from_bank)
         btnStart.setOnClickListener {
-            var notificationUtil = FirebaseNotificationUtil()
-            notificationUtil.startGame(firebaseHelper.gameId)
+            val notificationUtil = FirebaseNotificationUtil(firebaseHelper.gameId)
+            notificationUtil.startGame()
             firebaseHelper.startGame()
         }
     }

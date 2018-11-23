@@ -1,12 +1,23 @@
 package com.maxtauro.monopolywallet.util
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Context.*
 import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
+import android.support.v4.app.NotificationCompat
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentCreateGame
 import com.maxtauro.monopolywallet.HostGame
 import com.maxtauro.monopolywallet.JoinGame
+import com.maxtauro.monopolywallet.R
+import com.maxtauro.monopolywallet.util.NotificationTypes.GameStartNotification
+import com.maxtauro.monopolywallet.util.NotificationTypes.PayBankIntentNotification
 
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
@@ -14,8 +25,6 @@ import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
  * TODO add authoring, date, and desc
  */
 class NotificationService : FirebaseMessagingService() {
-
-    lateinit var gameId: String
 
     //Auth
     private lateinit var auth: FirebaseAuth
@@ -45,10 +54,12 @@ class NotificationService : FirebaseMessagingService() {
             Log.d(TAG, "Message Notification Body: ${it.body}")
             when (it.body) {
                 StandardNotifications.START_GAME_NOTIFICATION.toString() -> startGame(remoteMessage)
+                StandardNotifications.PAY_BANK_INTENT_NOTIFICATION.toString() -> processBankPaymentIntent(remoteMessage)
             }
         }
 
     }
+
 
     private fun startGame(remoteMessage: RemoteMessage?) {
 
@@ -61,17 +72,35 @@ class NotificationService : FirebaseMessagingService() {
 
         val startGameIntent: Intent
 
-        if (gameHostId == auth.uid) {
-            startGameIntent = Intent(this, HostGame::class.java)
+        startGameIntent = if (gameHostId == auth.uid) {
+            Intent(this, HostGame::class.java)
         }
 
         else {
-            startGameIntent = Intent(this, JoinGame::class.java)
+            Intent(this, JoinGame::class.java)
         }
+
+        sendNotification(remoteMessage.notification!!.body!!)
 
         startGameIntent.putExtra("gameId", gameId)
         startGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(startGameIntent)
+    }
+
+    private fun processBankPaymentIntent(remoteMessage: RemoteMessage) {
+//
+//        val gameIdField = PayBankIntentNotification.MessageDataFields.GAME_ID.toString()
+//        val payerIdField = PayBankIntentNotification.MessageDataFields.PLAYER_ID.toString()
+//        val paymentAmountField = PayBankIntentNotification.MessageDataFields.PAYMENT_AMOUNT.toString()
+//
+//        val gameId = remoteMessage!!.data[gameIdField]
+//        val payerId = remoteMessage!!.data[payerIdField]
+//        val paymentAmount = remoteMessage!!.data[paymentAmountField]
+//
+//        if (gameId == null || gameId == "" || payerId == null || payerId == "" || paymentAmount == null) TODO("HANDLE BAD NOTIFICATION FOR Payment")
+//
+//        //TODO toast and icon to indicate there is a payment awaiting approval
+
     }
 
     // [START on_new_token]
@@ -129,32 +158,34 @@ class NotificationService : FirebaseMessagingService() {
      * @param messageBody FCM message body received.
      */
     private fun sendNotification(messageBody: String) {
+
+
 //        val intent = Intent(this, MainActivity::class.java)
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 //        val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
 //                PendingIntent.FLAG_ONE_SHOT)
 //
-//        val channelId = getString(R.string.default_notification_channel_id)
-//        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-//        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-//                .setSmallIcon(R.drawable.ic_stat_ic_notification)
-//                .setContentTitle(getString(R.string.fcm_message))
-//                .setContentText(messageBody)
-//                .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
-//                .setContentIntent(pendingIntent)
+        val channelId = getString(R.string.default_notification_channel_id)
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+                .setSmallIcon(R.drawable.templogo)
+                .setContentTitle(getString(R.string.fcm_message))
+                .setContentText(messageBody)
+                .setAutoCancel(true)
+                .setSound(defaultSoundUri)
+
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Since android Oreo notification channel is needed.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId,
+                    "Channel human readable title",
+                    NotificationManager.IMPORTANCE_HIGH)
+            notificationManager.createNotificationChannel(channel)
+        }
 //
-//        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//
-//        // Since android Oreo notification channel is needed.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            val channel = NotificationChannel(channelId,
-//                    "Channel human readable title",
-//                    NotificationManager.IMPORTANCE_DEFAULT)
-//            notificationManager.createNotificationChannel(channel)
-//        }
-//
-//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
     }
 
     companion object {

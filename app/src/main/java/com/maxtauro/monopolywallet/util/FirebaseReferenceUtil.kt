@@ -1,46 +1,97 @@
 package com.maxtauro.monopolywallet.util
 
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Query
+import java.lang.NullPointerException
 
 /**
- *  A util class for building paths for in firebase real-time database
+ *  A util class for building paths and database references for firebase real-time database
  */
-class FirebaseReferenceUtil: FirebaseReferenceConstants() {
+class FirebaseReferenceUtil(val gameId: String): FirebaseReferenceConstants() {
 
     // Database
     val database = FirebaseDatabase.getInstance()
     val databaseRef = database.reference
 
-    fun getHostRef(): String {
+    private val referenceBuilder = ReferenceBuilder(gameId, databaseRef)
 
-        val referenceBuilder = ReferenceBuilder()
+    fun getHostPath(): String {
 
         referenceBuilder.addNodePath(GAME_INFO_NODE_KEY)
         referenceBuilder.addNodePath(HOST_NAME_NODE_KEY)
 
-        return referenceBuilder.build()
+        return referenceBuilder.buildPath()
     }
 
     fun getGameActivePath(): String {
 
-        val referenceBuilder = ReferenceBuilder()
-
         referenceBuilder.addNodePath(GAME_INFO_NODE_KEY)
         referenceBuilder.addNodePath(GAME_ACTIVE_NODE_KEY)
 
-        return referenceBuilder.build()
+        return referenceBuilder.buildPath()
+    }
+
+    fun getPlayerBalanceRef(playerId: String?): DatabaseReference {
+
+        if (playerId == null) {
+            throw NullPointerException("Could not get player ID") //TODO implement an error handling framework
+        }
+
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_BALANCE_NODE_KEY)
+
+        return referenceBuilder.buildRef()
+    }
+
+    fun getPlayerBalancePath(playerId: String): String {
+
+        if (playerId == null) {
+            throw NullPointerException("Could not get player ID") //TODO implement an error handling framework
+        }
+
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_BALANCE_NODE_KEY)
+
+        return referenceBuilder.buildPath()
+    }
+
+    fun getPlayerNotificationPath(playerId: String): String {
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_NOTIFICATION_LIST_KEY)
+
+        return referenceBuilder.buildPath()
+    }
+
+    fun getPlayerNotificationRef(playerId: String): DatabaseReference {
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        referenceBuilder.addNodePath(playerId)
+        referenceBuilder.addNodePath(PLAYER_NOTIFICATION_LIST_KEY)
+
+        return referenceBuilder.buildRef()
     }
 
 
-    class ReferenceBuilder {
+    private class ReferenceBuilder(val gameId: String, val databaseReference: DatabaseReference) {
 
-        var reference: String = ""
+        var reference: String = "$gameId/"
 
         fun addNodePath(nodePath: String) {
             reference += "$nodePath/"
         }
 
-        fun build() = reference.trimEnd('/')
+        fun buildPath(): String {
+            val resultRef = reference
+            reference = "$gameId/"
+            return resultRef
+        }
+
+        fun buildRef(): DatabaseReference {
+            return databaseReference.child(buildPath())
+        }
 
     }
 }
