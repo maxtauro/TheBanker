@@ -31,7 +31,7 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <Button
-        android:id="@+id/btn_start"
+        android:id="@+id/btn_get_from_bank"
         style="@android:style/Widget.Material.Button.Small"
         android:layout_width="144dp"
         android:layout_height="49dp"
@@ -43,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/btn_cancel"
+        android:id="@+id/btn_pay_bank"
         style="@android:style/Widget.Material.Button.Small"
         android:layout_width="145dp"
         android:layout_height="50dp"
@@ -63,7 +63,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="172dp"
         android:layout_marginStart="172dp"
-        app:layout_constraintBottom_toTopOf="@+id/btn_cancel"
+        app:layout_constraintBottom_toTopOf="@+id/btn_pay_bank"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

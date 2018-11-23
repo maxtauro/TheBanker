@@ -1,4 +1,4 @@
-package com.maxtauro.monopolywallet
+package com.maxtauro.monopolywallet.DialogFragments
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.util.Log
 import android.widget.EditText
+import com.maxtauro.monopolywallet.R
+import com.maxtauro.monopolywallet.StartPage
 import com.maxtauro.monopolywallet.util.validate
 
 /**
