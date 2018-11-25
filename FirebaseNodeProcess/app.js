@@ -40,18 +40,20 @@ function listenForNotificationRequests() {
             requestSnapshot.ref.remove();
         }
 
-        var NOTIFICATION_TYPE = notification.NOTIFICATION_TYPE
+        var notificationType = notification.notificationType
 
-        if (NOTIFICATION_TYPE == 'START_GAME_NOTIFICATION') {
+        if (notificationType == 'START_GAME_NOTIFICATION') {
             sendStartGameNotification(notification, onNotificationSuccess);
         }
 
-        else if (NOTIFICATION_TYPE == 'PAY_BANK_INTENT_NOTIFICATION') {
-            sendPayBankIntentNotification(notification, onNotificationSuccess);
+        else if (notificationType == 'BANK_DEBIT_TRANSACTION_NOTIFICATION' ||
+                 notificationType == 'BANK_CREDIT_TRANSACTION_NOTIFICATION') {
+            sendBankTransactionRequestNotification(notification, onNotificationSuccess);
         }
 
+
         else {
-            console.log('Failed to recognize notification type: ' + request.NOTIFICATION_TYPE);
+            console.log('Failed to recognize notification type: ' + notificationType);
         }
     },
     function(error) {
@@ -99,13 +101,14 @@ function sendStartGameNotification(notification, onSuccess) {
         });
 }
 
-function sendPayBankIntentNotification(notification, onSuccess) {
+function sendBankTransactionRequestNotification(notification, onSuccess) {
 
     var gameId = notification.gameId;
     var playerId = notification.playerId;
     var paymentAmount = notification.paymentAmount;
+    var notificationType = notification.notificationType;
 
-    console.log('sendStartGameNotification: Trying to send PAY_BANK_INTENT_NOTIFICATION to ' + gameId + '-Host');
+    console.log('sendStartGameNotification: Trying to send' + notificationType +' to ' + gameId + '-Host');
 
     request({
         url: 'https://fcm.googleapis.com/fcm/send',
@@ -123,7 +126,7 @@ function sendPayBankIntentNotification(notification, onSuccess) {
                 "PAYMENT_AMOUNT" : paymentAmount
             },
             notification: {
-                body: 'PAY_BANK_INTENT_NOTIFICATION',
+                body: notificationType,
             },
             to : '/topics/' + gameId + '-Host'
         })
@@ -136,7 +139,7 @@ function sendPayBankIntentNotification(notification, onSuccess) {
                 }
                 else {
                     onSuccess();
-                    console.log('sendStartGameNotification: Successfully sent PAY_BANK_INTENT_NOTIFICATION notification');
+                    console.log('sendStartGameNotification: Successfully sent ' + notificationType + ' notification');
                 }
         });
 

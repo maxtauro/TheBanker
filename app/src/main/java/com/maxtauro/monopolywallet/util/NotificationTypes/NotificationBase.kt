@@ -2,7 +2,7 @@ package com.maxtauro.monopolywallet.util.NotificationTypes
 
 
 /**
- * TODO add authoring, date, and desc
+ * Base class for notifications
  */
 
-abstract class NotificationBase(val gameId: String, val NOTIFICATION_TYPE : StandardNotifications) {}
+abstract class NotificationBase(val gameId: String, val notificationType : StandardNotifications) {}

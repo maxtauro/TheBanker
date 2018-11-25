@@ -1,9 +1,8 @@
-package com.maxtauro.monopolywallet.util
+package com.maxtauro.monopolywallet.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Context.*
 import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
@@ -12,14 +11,12 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentCreateGame
 import com.maxtauro.monopolywallet.HostGame
 import com.maxtauro.monopolywallet.JoinGame
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.NotificationTypes.GameStartNotification
-import com.maxtauro.monopolywallet.util.NotificationTypes.PayBankIntentNotification
-
-import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
+import com.maxtauro.monopolywallet.util.BankTransactionEnums
+import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.util.NotificationTypes.*
 
 /**
  * TODO add authoring, date, and desc
@@ -54,7 +51,8 @@ class NotificationService : FirebaseMessagingService() {
             Log.d(TAG, "Message Notification Body: ${it.body}")
             when (it.body) {
                 StandardNotifications.START_GAME_NOTIFICATION.toString() -> startGame(remoteMessage)
-                StandardNotifications.PAY_BANK_INTENT_NOTIFICATION.toString() -> processBankPaymentIntent(remoteMessage)
+                StandardNotifications.BANK_DEBIT_TRANSACTION_NOTIFICATION.toString() -> processBankTransactionRequest(remoteMessage, BankTransactionEnums.DEBIT)
+                StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION.toString() -> processBankTransactionRequest(remoteMessage, BankTransactionEnums.CREDIT)
             }
         }
 
@@ -68,7 +66,7 @@ class NotificationService : FirebaseMessagingService() {
 
         if (gameId == null || gameId == "") TODO("HANDLE BAD NOTIFICATION FOR START GAME")
 
-        val gameHostId : String =  FirebaseHelper.getGameHostUid(gameId!!)
+        val gameHostId : String = FirebaseHelper.getGameHostUid(gameId!!)
 
         val startGameIntent: Intent
 
@@ -87,20 +85,31 @@ class NotificationService : FirebaseMessagingService() {
         startActivity(startGameIntent)
     }
 
-    private fun processBankPaymentIntent(remoteMessage: RemoteMessage) {
-//
-//        val gameIdField = PayBankIntentNotification.MessageDataFields.GAME_ID.toString()
-//        val payerIdField = PayBankIntentNotification.MessageDataFields.PLAYER_ID.toString()
-//        val paymentAmountField = PayBankIntentNotification.MessageDataFields.PAYMENT_AMOUNT.toString()
-//
-//        val gameId = remoteMessage!!.data[gameIdField]
-//        val payerId = remoteMessage!!.data[payerIdField]
-//        val paymentAmount = remoteMessage!!.data[paymentAmountField]
-//
-//        if (gameId == null || gameId == "" || payerId == null || payerId == "" || paymentAmount == null) TODO("HANDLE BAD NOTIFICATION FOR Payment")
-//
-//        //TODO toast and icon to indicate there is a payment awaiting approval
+    private fun processBankTransactionRequest(remoteMessage: RemoteMessage, creditDebit: BankTransactionEnums) {
 
+        val gameIdField = PlayerGameNotification.MessageDataFields.GAME_ID.toString()
+
+        val payerIdField = PlayerGameNotification.MessageDataFields.PLAYER_ID.toString()
+        val paymentAmountField = BankTransactionRequestNotification.MessageDataFields.PAYMENT_AMOUNT.toString()
+
+        val gameId = remoteMessage.data[gameIdField]
+        val payerId = remoteMessage.data[payerIdField]
+        val paymentAmount = remoteMessage.data[paymentAmountField]?.toInt()
+
+        if (gameId == null || gameId == "" || payerId == null || payerId == "" || paymentAmount == null) TODO("HANDLE BAD NOTIFICATION FOR Payment")
+
+        val notificationType: StandardNotifications = //TODO, can we just pass this as a parameter?
+                if (creditDebit == BankTransactionEnums.DEBIT) StandardNotifications.BANK_DEBIT_TRANSACTION_NOTIFICATION
+                else StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION
+
+        val paymentIntentNotification = BankTransactionRequestNotification(gameId, payerId, paymentAmount, notificationType)
+        val firebaseHelper = FirebaseHelper(gameId)
+        val hostUid = FirebaseHelper.getGameHostUid(gameId)
+
+        //If the current user is the host, the bank transaction does not need to be approved, so it is processed right away
+        if (auth.uid == hostUid) firebaseHelper.processBankPayment(paymentIntentNotification, creditDebit)
+        else firebaseHelper.createPayBankIntentRequest(paymentIntentNotification, creditDebit)
+        //TODO toast and icon to indicate there is a payment awaiting approval
     }
 
     // [START on_new_token]

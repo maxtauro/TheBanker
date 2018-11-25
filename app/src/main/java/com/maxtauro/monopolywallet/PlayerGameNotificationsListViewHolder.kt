@@ -3,8 +3,8 @@ package com.maxtauro.monopolywallet
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 import com.maxtauro.monopolywallet.util.PlayerGameNotificationUtil
-import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotifications
 
 class PlayerGameNotificationsListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
 
@@ -12,7 +12,7 @@ class PlayerGameNotificationsListViewHolder : RecyclerView.ViewHolder, View.OnCl
     lateinit var txt_amount: TextView
     lateinit var txt_notification_type: TextView
 
-    lateinit var playerGameNotifications: PlayerGameNotifications
+    lateinit var playerGameNotifications: PlayerGameNotification
 
     constructor(itemView : View) : super(itemView) {
 

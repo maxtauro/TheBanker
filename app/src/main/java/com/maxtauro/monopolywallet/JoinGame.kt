@@ -14,7 +14,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPayBank
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
@@ -52,19 +53,24 @@ class JoinGame :  AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        val btnCancel = findViewById<Button>(R.id.btn_get_from_bank)
-        btnCancel.setOnClickListener {
+        val btnGetFromBank = findViewById<Button>(R.id.btn_get_from_bank)
+        btnGetFromBank.setOnClickListener {
+            val dialogFragmentBankCredit = DialogFragmentBankCredit()
 
+            val bundle = Bundle()
+            bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+            dialogFragmentBankCredit.arguments = bundle
+            dialogFragmentBankCredit.show(supportFragmentManager, "DialogFragmentBankCredit")
         }
 
-        val btnStart = findViewById<Button>(R.id.btn_pay_bank)
-        btnStart.setOnClickListener {
-            val dialogFragmentPayBank = DialogFragmentPayBank()
+        val btnPayBank = findViewById<Button>(R.id.btn_pay_bank)
+        btnPayBank.setOnClickListener {
+            val dialogFragmentPayBank = DialogFragmentBankDebit()
 
             val bundle = Bundle()
             bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
             dialogFragmentPayBank.arguments = bundle
-            dialogFragmentPayBank.show(supportFragmentManager, "DialogFragmentPayBank")
+            dialogFragmentPayBank.show(supportFragmentManager, "DialogFragmentBankDebit")
         }
     }
 
