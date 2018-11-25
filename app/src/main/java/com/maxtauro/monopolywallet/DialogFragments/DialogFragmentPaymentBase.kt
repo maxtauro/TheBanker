@@ -8,17 +8,15 @@ import android.util.Log
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
 
-
 /**
- * Dialog Fragment for sending a payment to the Bank
+ * Base class for selecting payment amounts
  */
-class DialogFragmentPayBank: DialogFragment() {
+abstract class DialogFragmentPaymentBase: DialogFragment() {
 
     lateinit var gameId: String
-    private lateinit var auth: FirebaseAuth
+    protected lateinit var auth: FirebaseAuth
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
@@ -27,7 +25,7 @@ class DialogFragmentPayBank: DialogFragment() {
         if (arguments != null) {
             gameId = arguments!!.getString(IntentExtrasConstants.GAME_ID_EXTRA,"")
         }
-        
+
         val builder = AlertDialog.Builder(activity)
         val inflater = activity!!.layoutInflater
         val layout = inflater.inflate(R.layout.dialog_pay_bank, null)
@@ -50,15 +48,15 @@ class DialogFragmentPayBank: DialogFragment() {
                     catch (e: NumberFormatException) {TODO("Validate amount input")}
 
                     Log.d(TAG, CLICKED_PAY)
-
-                    val notificationUtil = FirebaseNotificationUtil(gameId)
-                    notificationUtil.sendBankPaymentNotification(paymentAmount, auth.uid)
+                    onPositiveButtonClick(paymentAmount)
 
                 }
                 .setNegativeButton(cancelBtnLabel) { _, _ ->}
 
         return builder.create()
     }
+
+    abstract fun onPositiveButtonClick(paymentAmount: Int)
 
     companion object {
         private const val TAG = "Fragment CreateGame"

@@ -20,24 +20,30 @@ class FirebaseNotificationUtil(val gameId: String) {
         sendNotification(notificationBuilder.build())
     }
 
-    fun sendBankPaymentNotification(paymentAmount: Int, playerId: String?) {
+    fun sendBankTransactionNotification(paymentAmount: Int, playerId: String?, creditDebit: BankTransactionEnums) {
 
         if (playerId == null) {
-            throw NullPointerException("Could not get player ID") //TODO implement an error handling framework
+            TODO("Implement Error handling framework")
         }
 
         val notificationBuilder = NotificationBuilder()
-        notificationBuilder.setGameAndNotificationType(gameId, StandardNotifications.PAY_BANK_INTENT_NOTIFICATION)
 
-        notificationBuilder.addItem("amount", paymentAmount)
+        val notificationType = if (creditDebit == BankTransactionEnums.DEBIT) {
+            StandardNotifications.BANK_DEBIT_TRANSACTION_NOTIFICATION
+        }
+        else {
+            StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION
+        }
+
+        notificationBuilder.setGameAndNotificationType(gameId, notificationType)
+
+        notificationBuilder.addItem("paymentAmount", paymentAmount)
         notificationBuilder.addItem("playerId", playerId)
 
         val notification = notificationBuilder.build()
 
         sendNotification(notification)
 
-        val firebaseHelper = FirebaseHelper(gameId)
-        firebaseHelper.createPaymentRequest(notification)
     }
 
     private fun sendNotification(notification: HashMap<String, Any>) {
@@ -59,7 +65,7 @@ class FirebaseNotificationUtil(val gameId: String) {
         //TODO, should I set these in the constructor?
         fun setGameAndNotificationType(gameId: String, notificationType: StandardNotifications) {
             notification["gameId"] = gameId //TODO, put these keys in some enum
-            notification["NOTIFICATION_TYPE"] = notificationType.toString()
+            notification["notificationType"] = notificationType.toString()
         }
 
 

@@ -2,23 +2,27 @@ package com.maxtauro.monopolywallet.util.NotificationTypes
 
 
 /**
- * TODO add authoring, date, and desc
+ * Enum class of standard notification types for the application
  */
 
 enum class StandardNotifications {
 
+    //Game Notifications
     START_GAME_NOTIFICATION,
     END_GAME_NOTIFICATION,
     LEAVE_GAME,
-    PAY_BANK_INTENT_NOTIFICATION,
-    PAY_BANK_CONFIRMATION_NOTIFICATION,
-    REQUEST_PAYMENT_FROM_BANK,
-    APPROVE_BANK_REQUEST,
-    PAY_USER,
-    REQUEST_PAYMENT_FROM_USER,
-    RESPOND_TO_USER_PAYMENT,
-    RESPOND_TO_USER_PAYMENT_REQUEST,
 
+    //Bank Transaction Notifications
+    BANK_DEBIT_TRANSACTION_NOTIFICATION,
+    BANK_CREDIT_TRANSACTION_NOTIFICATION,
+    BANK_CREDIT_CONFIRMATION,
+    BANK_DEBIT_CONFIRMATION,
+
+    //P2P Transaction Notification
+
+
+
+    //Generic notification, used when notification type does not matter
     GENERIC_NOTIFICATION
 
 }

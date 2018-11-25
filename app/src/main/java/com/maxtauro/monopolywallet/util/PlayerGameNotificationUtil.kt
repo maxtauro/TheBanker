@@ -1,6 +1,5 @@
 package com.maxtauro.monopolywallet.util
 
-import com.maxtauro.monopolywallet.util.NotificationTypes.PayBankIntentNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
@@ -8,17 +7,22 @@ class PlayerGameNotificationUtil {
 
     companion object {
 
-        fun confirmNotification(playerGameNotifications: PlayerGameNotification) {
+        fun confirmNotification(playerGameNotification: PlayerGameNotification) {
 
-            when (playerGameNotifications.NOTIFICATION_TYPE) {
-                StandardNotifications.PAY_BANK_INTENT_NOTIFICATION -> confirmBankPaymentIntent(playerGameNotifications)
+            when (playerGameNotification.notificationType) {
+                StandardNotifications.BANK_DEBIT_TRANSACTION_NOTIFICATION -> confirmBankPaymentIntent(playerGameNotification)
+                StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION -> confirmBankCreditTransaction(playerGameNotification)
             }
         }
 
-        private fun confirmBankPaymentIntent(playerGameNotifications: PlayerGameNotification) {
+        private fun confirmBankCreditTransaction(playerGameNotification: PlayerGameNotification) {
+            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
+            firebaseHelper.processBankPayment(playerGameNotification, BankTransactionEnums.CREDIT)
+        }
 
-            val firebaseHelper = FirebaseHelper(playerGameNotifications.gameId)
-            firebaseHelper.processBankPayment(playerGameNotifications as PayBankIntentNotification, BankTransactionEnums.DEBIT)
+        private fun confirmBankPaymentIntent(playerGameNotification: PlayerGameNotification) {
+            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
+            firebaseHelper.processBankPayment(playerGameNotification, BankTransactionEnums.DEBIT)
         }
 
 

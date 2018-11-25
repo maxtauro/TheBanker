@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
@@ -66,14 +68,24 @@ class HostGame :  AppCompatActivity() {
     }
 
     private fun setupButtons() {
-        val btnCancel = findViewById<Button>(R.id.btn_get_from_bank)
-        btnCancel.setOnClickListener {
+        val btnGetFromBank = findViewById<Button>(R.id.btn_get_from_bank)
+        btnGetFromBank.setOnClickListener {
+            val dialogFragmentBankCredit = DialogFragmentBankCredit()
 
+            val bundle = Bundle()
+            bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+            dialogFragmentBankCredit.arguments = bundle
+            dialogFragmentBankCredit.show(supportFragmentManager, "DialogFragmentBankCredit")
         }
 
-        val btnStart = findViewById<Button>(R.id.btn_pay_bank)
-        btnStart.setOnClickListener {
-            TODO("IMPLEMENT BANK PAYMENT AS THE HOST")
+        val btnPayBank = findViewById<Button>(R.id.btn_pay_bank)
+        btnPayBank.setOnClickListener {
+            val dialogFragmentBankDebit = DialogFragmentBankDebit()
+
+            val bundle = Bundle()
+            bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+            dialogFragmentBankDebit.arguments = bundle
+            dialogFragmentBankDebit.show(supportFragmentManager, "DialogFragmentBankDebit")
         }
     }
 
@@ -145,7 +157,7 @@ class HostGame :  AppCompatActivity() {
                 holder.playerGameNotifications = notification
 
                 holder.txt_amount.text = notification.amount.toString()
-                holder.txt_notification_type.text = notification.NOTIFICATION_TYPE.toString()
+                holder.txt_notification_type.text = notification.notificationType.toString()
                 holder.txt_player_id.text = notification.playerId //TODO, actual user name needs to be a parameter
             }
         }
