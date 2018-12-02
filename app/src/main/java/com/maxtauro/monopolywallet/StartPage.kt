@@ -47,17 +47,17 @@ class StartPage : AppCompatActivity() {
 
             //TODO REMOVE THIS, TEMP FOR MAKING UI
             val tempHostIntent = Intent(this, JoinGame::class.java)
-            tempHostIntent.putExtra("gameId", "f68d51")
+            tempHostIntent.putExtra("gameId", "10f0e4")
             startActivity(tempHostIntent)
         }
 
         val btnStart = findViewById<Button>(R.id.start_button)
         btnStart.setOnClickListener {
-        //    dialogCreateGame.show(supportFragmentManager, "create game dialog")
+//            dialogCreateGame.show(supportFragmentManager, "create game dialog")
 //
             //TODO REMOVE THIS, TEMP FOR MAKING UI
             val tempHostIntent = Intent(this, HostGame::class.java)
-            tempHostIntent.putExtra("gameId", "f68d51")
+            tempHostIntent.putExtra("gameId", "10f0e4")
             startActivity(tempHostIntent)
         }
     }

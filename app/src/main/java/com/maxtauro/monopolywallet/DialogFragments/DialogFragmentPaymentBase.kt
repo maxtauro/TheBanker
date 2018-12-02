@@ -5,7 +5,9 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.util.Log
+import android.view.View
 import android.widget.EditText
+import android.widget.RadioGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
@@ -38,6 +40,8 @@ abstract class DialogFragmentPaymentBase: DialogFragment() {
 
         var paymentAmount: Int = 0
 
+        setUpRadioGroup(layout)
+
         builder.setView(layout)
                 .setPositiveButton(payBankBtnLabel) { _, _ ->
 
@@ -55,6 +59,9 @@ abstract class DialogFragmentPaymentBase: DialogFragment() {
 
         return builder.create()
     }
+
+    // This function is to be overridden in DialogFragmentPlayerTransaction
+    protected open fun setUpRadioGroup(layout: View) {}
 
     abstract fun onPositiveButtonClick(paymentAmount: Int)
 

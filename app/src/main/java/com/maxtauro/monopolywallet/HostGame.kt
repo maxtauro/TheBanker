@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPlayerTransaction
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
@@ -64,7 +65,6 @@ class HostGame :  AppCompatActivity() {
         setupUtils()
         setupButtons()
         setupGame()
-//        setupNotificationService()
     }
 
     private fun setupButtons() {
@@ -112,11 +112,8 @@ class HostGame :  AppCompatActivity() {
             override fun onCancelled(dbError: DatabaseError) {
                 TODO("Have not implemented error handling if cannot receive balance") //To change body of created functions use File | Settings | File Templates.
             }
-
         }
-
         playerBalanceRef.addValueEventListener(balanceListener)
-
 
         initRecyclerViews()
     }
@@ -188,6 +185,16 @@ class HostGame :  AppCompatActivity() {
 
             override fun onBindViewHolder(holder: PlayerListViewHolder, position: Int, player: Player) {
                 holder.txtPlayerName.text = player.playerName
+                holder.playerId = player.playerId
+                holder.itemView.setOnClickListener {
+                    val dialogFragmentPlayerTransaction = DialogFragmentPlayerTransaction()
+
+                    val bundle = Bundle()
+                    bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+                    bundle.putString(IntentExtrasConstants.RECIPIENT_ID_EXTRA, player.playerId)
+                    dialogFragmentPlayerTransaction.arguments = bundle
+                    dialogFragmentPlayerTransaction.show(supportFragmentManager, "DialogFragmentBankDebit")
+                }
             }
         }
 

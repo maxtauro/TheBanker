@@ -26,12 +26,12 @@ import com.maxtauro.monopolywallet.util.IntentExtrasConstants
 class JoinGame :  AppCompatActivity() {
 
     //Firebase
-    lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
-    lateinit var firebaseHelper: FirebaseHelper
+    private lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
+    private lateinit var firebaseHelper: FirebaseHelper
     lateinit var auth: FirebaseAuth
 
     //RecyclerView
-    lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
+    private lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
     lateinit var listPlayersRecyclerView: RecyclerView
     lateinit var layoutManager: RecyclerView.LayoutManager
 
