@@ -140,8 +140,8 @@ class FirebaseHelper(val gameId: String) {
                 else BankTransactionEnums.DEBIT
 
         val currUserCreditDebit =
-                if (tranType == PlayerTransactionEnum.REQUEST_MONEY) BankTransactionEnums.CREDIT
-                else BankTransactionEnums.DEBIT
+                if (tranType == PlayerTransactionEnum.REQUEST_MONEY) BankTransactionEnums.DEBIT
+                else BankTransactionEnums.CREDIT
 
         val notificationInfo = Pair(auth.uid!!, notificationKey)
 
