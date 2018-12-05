@@ -18,6 +18,9 @@ import com.google.firebase.database.ValueEventListener
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPlayerTransaction
+import com.maxtauro.monopolywallet.DialogFragments.DialogTransactionConfirmation
+import com.maxtauro.monopolywallet.ListViewHolder.PlayerGameNotificationsListViewHolder
+import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
@@ -195,6 +198,9 @@ class JoinGame :  AppCompatActivity() {
                 holder.txt_amount.text = notification.amount.toString()
                 holder.txt_notification_type.text = notification.notificationType.toString()
                 holder.txt_player_id.text = notification.playerId //TODO, actual user name needs to be a parameter
+                holder.itemView.setOnClickListener {
+                    DialogTransactionConfirmation.newInstance(notification).show(supportFragmentManager, "DialogTransactionConfirmation")
+                }
             }
         }
 

@@ -20,6 +20,11 @@ class PlayerGameNotificationUtil {
             }
         }
 
+        fun declineNotification(playerGameNotification: PlayerGameNotification) {
+            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
+            firebaseHelper.declineNotification(playerGameNotification)
+        }
+
         private fun confirmBankCreditTransaction(playerGameNotification: PlayerGameNotification) {
             val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
             firebaseHelper.processBankPayment(playerGameNotification, BankTransactionEnums.CREDIT)

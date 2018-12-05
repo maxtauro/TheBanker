@@ -149,6 +149,13 @@ class FirebaseHelper(val gameId: String) {
         processTransaction(currUserBalanceRef, amount, currUserCreditDebit, notificationInfo)
     }
 
+    fun declineNotification(playerGameNotification: PlayerGameNotification) {
+        val notificationKey = playerGameNotification.notificationKey
+        val notificationInfo = Pair(auth.uid!!, notificationKey)
+        removePlayerNotification(notificationInfo)
+        //TODO send declination notification
+    }
+
     private fun processTransaction(balanceRef: DatabaseReference, amount: Int, creditDebit: BankTransactionEnums, notificationInfo: Pair<String, String>? = null) {
         balanceRef.runTransaction(object : Transaction.Handler {
             override fun onComplete(p0: DatabaseError?, p1: Boolean, p2: DataSnapshot?) {
@@ -175,6 +182,7 @@ class FirebaseHelper(val gameId: String) {
         })
     }
 
+    //TODO change this from a pair, its to confusing
     private fun removePlayerNotification(notificationInfo: Pair<String, String>) {
 
         val notificationRef = firebaseReferenceUtil
@@ -188,6 +196,8 @@ class FirebaseHelper(val gameId: String) {
                     }
                 }
     }
+
+
 
     companion object {
 

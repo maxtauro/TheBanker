@@ -1,15 +1,13 @@
-package com.maxtauro.monopolywallet
+package com.maxtauro.monopolywallet.ListViewHolder
 
-import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
-import com.maxtauro.monopolywallet.util.IntentExtrasConstants
+import com.maxtauro.monopolywallet.R
 
 /**
- * TODO add authoring, date, and desc
+ * ListViewHolder for players in the current game/game lobby
  */
 class PlayerListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
 
@@ -23,8 +21,6 @@ class PlayerListViewHolder : RecyclerView.ViewHolder, View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-
-
         Log.d("PlayerListViewHolder", "Click on player")
     }
 }

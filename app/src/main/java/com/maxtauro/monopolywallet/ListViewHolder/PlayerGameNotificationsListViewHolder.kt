@@ -1,8 +1,9 @@
-package com.maxtauro.monopolywallet
+package com.maxtauro.monopolywallet.ListViewHolder
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
+import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 import com.maxtauro.monopolywallet.util.PlayerGameNotificationUtil
 
@@ -24,7 +25,5 @@ class PlayerGameNotificationsListViewHolder : RecyclerView.ViewHolder, View.OnCl
 
     }
 
-    override fun onClick(v: View?) {
-        PlayerGameNotificationUtil.confirmNotification(playerGameNotifications)
-    }
+    override fun onClick(v: View?) {}
 }
