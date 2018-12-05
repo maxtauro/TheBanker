@@ -1,6 +1,7 @@
 package com.maxtauro.monopolywallet
 
 import android.os.Bundle
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -16,9 +17,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
+import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPlayerTransaction
+import com.maxtauro.monopolywallet.DialogFragments.DialogTransactionConfirmation
+import com.maxtauro.monopolywallet.ListViewHolder.PlayerGameNotificationsListViewHolder
+import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.IntentExtrasConstants
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
+import kotlinx.android.synthetic.main.activity_host_game.*
+import kotlinx.android.synthetic.main.app_bar_host_game.*
 
 /**
  * Activity for the Game from the Non-Host user
@@ -26,19 +34,28 @@ import com.maxtauro.monopolywallet.util.IntentExtrasConstants
 class JoinGame :  AppCompatActivity() {
 
     //Firebase
-    lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
-    lateinit var firebaseHelper: FirebaseHelper
+    private lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
+    private lateinit var firebaseHelper: FirebaseHelper
     lateinit var auth: FirebaseAuth
 
     //RecyclerView
-    lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
+    private lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
     lateinit var listPlayersRecyclerView: RecyclerView
     lateinit var layoutManager: RecyclerView.LayoutManager
+
+    //Notifications RecyelerView
+    lateinit var playerGameNotificationsListAdapter: FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>
+    lateinit var playerGameNotificationListRecyclerView: RecyclerView
+    lateinit var playerGameNotificationListLayoutManager: RecyclerView.LayoutManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_join_game)
 
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
     }
 
     override fun onStart() {
@@ -94,7 +111,19 @@ class JoinGame :  AppCompatActivity() {
 
         playerBalanceRef.addValueEventListener(balanceListener)
 
+        initRecyclerViews()
+    }
+
+    private fun initRecyclerViews() {
         playerListInit()
+        notificationListInit()
+    }
+
+    private fun createLayoutManager(): RecyclerView.LayoutManager {
+
+        var layoutManager = LinearLayoutManager(this)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        return layoutManager
     }
 
     private fun setupUtils() {
@@ -126,12 +155,57 @@ class JoinGame :  AppCompatActivity() {
 
             override fun onBindViewHolder(holder: PlayerListViewHolder, position: Int, player: Player) {
                 holder.txtPlayerName.text = player.playerName
-//                holder.root.setOnClickListener(View.OnClickListener { Toast.makeText(this@MainActivity, position.toString(), Toast.LENGTH_SHORT).show() })
+                holder.playerId = player.playerId
+                holder.itemView.setOnClickListener {
+                    val dialogFragmentPlayerTransaction = DialogFragmentPlayerTransaction()
+
+                    val bundle = Bundle()
+                    bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+                    bundle.putString(IntentExtrasConstants.RECIPIENT_ID_EXTRA, player.playerId)
+                    dialogFragmentPlayerTransaction.arguments = bundle
+                    dialogFragmentPlayerTransaction.show(supportFragmentManager, "DialogFragmentBankDebit")
+                }
             }
         }
 
         adapter.startListening()
         listPlayersRecyclerView.adapter = adapter
+    }
+
+    private fun notificationListInit() {
+        playerGameNotificationListRecyclerView = findViewById<RecyclerView>(R.id.non_host_notification_list_recycler)
+        playerGameNotificationListRecyclerView.setHasFixedSize(true)
+
+        playerGameNotificationListLayoutManager = createLayoutManager()
+        playerGameNotificationListRecyclerView.layoutManager = playerGameNotificationListLayoutManager
+
+        val options = FirebaseRecyclerOptions.Builder<PlayerGameNotification>()
+                .setQuery(firebaseReferenceUtil.getPlayerNotificationRef(auth.uid!!), PlayerGameNotification::class.java)
+                .build()
+
+        playerGameNotificationsListAdapter = object : FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>(options) {
+
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerGameNotificationsListViewHolder {
+                val view = LayoutInflater.from(parent.context)
+                        .inflate(R.layout.list_holder_user_notifications, parent, false)
+
+                return PlayerGameNotificationsListViewHolder(view)
+            }
+
+            override fun onBindViewHolder(holder: PlayerGameNotificationsListViewHolder, position: Int, notification: PlayerGameNotification) {
+                holder.playerGameNotifications = notification
+
+                holder.txt_amount.text = notification.amount.toString()
+                holder.txt_notification_type.text = notification.notificationType.toString()
+                holder.txt_player_id.text = notification.playerId //TODO, actual user name needs to be a parameter
+                holder.itemView.setOnClickListener {
+                    DialogTransactionConfirmation.newInstance(notification).show(supportFragmentManager, "DialogTransactionConfirmation")
+                }
+            }
+        }
+
+        playerGameNotificationsListAdapter.startListening()
+        playerGameNotificationListRecyclerView.adapter = playerGameNotificationsListAdapter
     }
 
 }

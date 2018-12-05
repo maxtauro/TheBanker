@@ -11,6 +11,8 @@ import com.maxtauro.monopolywallet.JoinGame
 import com.maxtauro.monopolywallet.service.NotificationService
 import com.maxtauro.monopolywallet.util.NotificationTypes.BankTransactionRequestNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerTransactionRequestNotification
+import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
 /**
  * A helper class for using firebase realtime database.
@@ -101,10 +103,65 @@ class FirebaseHelper(val gameId: String) {
         val amount = paymentNotification.amount
 
         val playerBalanceRef = firebaseReferenceUtil.getPlayerBalanceRef(playerId)
+        val notificationInfo = Pair(auth.uid!!, notificationKey)
 
-        playerBalanceRef.runTransaction(object : Transaction.Handler {
+        processTransaction(playerBalanceRef, amount, creditDebit, notificationInfo)
+    }
+
+    //TODO I should make the following two methods cleaner, there's no need to have both methods if they're this similar
+    fun createSendMoneyRequest(paymentAmount: Int, senderId: String?, recipientId: String) {
+        val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(recipientId).push()
+        val playerTransactionRequestNotification = PlayerTransactionRequestNotification(auth.uid!!, gameId, senderId!!, paymentAmount, StandardNotifications.PLAYER_SEND_TRANSACTION_REQUEST)
+
+        notificationRef.setValue(playerTransactionRequestNotification)
+        val requestKey: String = notificationRef.key!!
+        notificationRef.child(FirebaseReferenceConstants.PLAYER_NOTIFICATION_KEY_KEY).setValue(requestKey)
+    }
+
+    fun createRequestMoneyRequest(paymentAmount: Int, senderId: String?, recipientId: String) {
+        val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(recipientId).push()
+        val playerTransactionRequestNotification = PlayerTransactionRequestNotification(auth.uid!!, gameId, senderId!!, paymentAmount, StandardNotifications.PLAYER_REQUEST_TRANSACTION_REQUEST)
+
+        notificationRef.setValue(playerTransactionRequestNotification)
+        val requestKey: String = notificationRef.key!!
+        notificationRef.child(FirebaseReferenceConstants.PLAYER_NOTIFICATION_KEY_KEY).setValue(requestKey)
+    }
+
+    fun processPlayerTransaction(playerGameNotification: PlayerGameNotification, tranType: PlayerTransactionEnum) {
+        val playerId = playerGameNotification.playerId
+        val notificationKey = playerGameNotification.notificationKey
+        val amount = playerGameNotification.amount
+
+        val senderBalanceRef = firebaseReferenceUtil.getPlayerBalanceRef(playerId)
+        val currUserBalanceRef = firebaseReferenceUtil.getPlayerBalanceRef(auth.uid)
+
+        val senderCreditDebit =
+                if (tranType == PlayerTransactionEnum.REQUEST_MONEY) BankTransactionEnums.CREDIT
+                else BankTransactionEnums.DEBIT
+
+        val currUserCreditDebit =
+                if (tranType == PlayerTransactionEnum.REQUEST_MONEY) BankTransactionEnums.DEBIT
+                else BankTransactionEnums.CREDIT
+
+        val notificationInfo = Pair(auth.uid!!, notificationKey)
+
+        processTransaction(senderBalanceRef, amount, senderCreditDebit)
+        processTransaction(currUserBalanceRef, amount, currUserCreditDebit, notificationInfo)
+    }
+
+    fun declineNotification(playerGameNotification: PlayerGameNotification) {
+        val notificationKey = playerGameNotification.notificationKey
+        val notificationInfo = Pair(auth.uid!!, notificationKey)
+        removePlayerNotification(notificationInfo)
+        //TODO send declination notification
+    }
+
+    private fun processTransaction(balanceRef: DatabaseReference, amount: Int, creditDebit: BankTransactionEnums, notificationInfo: Pair<String, String>? = null) {
+        balanceRef.runTransaction(object : Transaction.Handler {
             override fun onComplete(p0: DatabaseError?, p1: Boolean, p2: DataSnapshot?) {
-                removePlayerNotification(notificationKey, playerId)
+                if (notificationInfo != null) {
+                    removePlayerNotification(notificationInfo)
+                }
             }
 
             override fun doTransaction(balance: MutableData): Transaction.Result {
@@ -122,14 +179,15 @@ class FirebaseHelper(val gameId: String) {
                 balance.value = newBalance
                 return Transaction.success(balance)
             }
-
         })
-
     }
 
-    private fun removePlayerNotification(notificationKey: String, playerId: String) {
+    //TODO change this from a pair, its to confusing
+    private fun removePlayerNotification(notificationInfo: Pair<String, String>) {
 
-        val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(playerId).child(notificationKey)
+        val notificationRef = firebaseReferenceUtil
+                .getPlayerNotificationRef(notificationInfo.first)
+                .child(notificationInfo.second)
 
         notificationRef.removeValue()
                 .addOnCompleteListener { task ->
@@ -138,6 +196,8 @@ class FirebaseHelper(val gameId: String) {
                     }
                 }
     }
+
+
 
     companion object {
 

@@ -31,6 +31,16 @@ admin.initializeApp({
 });
 var ref = admin.database().ref();
 
+var notificationTypes = Object.freeze({
+    START_GAME_NOTIFICATION : 'START_GAME_NOTIFICATION',
+
+    BANK_DEBIT_TRANSACTION_NOTIFICATION : 'BANK_DEBIT_TRANSACTION_NOTIFICATION',
+    BANK_CREDIT_TRANSACTION_NOTIFICATION : 'BANK_CREDIT_TRANSACTION_NOTIFICATION',
+
+    PLAYER_SEND_TRANSACTION_REQUEST : 'PLAYER_SEND_TRANSACTION_REQUEST',
+    PLAYER_REQUEST_TRANSACTION_REQUEST : 'PLAYER_REQUEST_TRANSACTION_REQUEST'
+});
+
 function listenForNotificationRequests() {
     var requests = ref.child('notificationRequests');
     requests.on('child_added', function(requestSnapshot) {
@@ -41,14 +51,20 @@ function listenForNotificationRequests() {
         }
 
         var notificationType = notification.notificationType
-
-        if (notificationType == 'START_GAME_NOTIFICATION') {
+        console.log(notificationType)
+        console.log(notificationTypes.START_GAME_NOTIFICATION)
+        if (notificationType == notificationTypes.START_GAME_NOTIFICATION) {
             sendStartGameNotification(notification, onNotificationSuccess);
         }
 
-        else if (notificationType == 'BANK_DEBIT_TRANSACTION_NOTIFICATION' ||
-                 notificationType == 'BANK_CREDIT_TRANSACTION_NOTIFICATION') {
+        else if (notificationType == notificationTypes.BANK_DEBIT_TRANSACTION_NOTIFICATION ||
+                 notificationType == notificationTypes.BANK_CREDIT_TRANSACTION_NOTIFICATION) {
             sendBankTransactionRequestNotification(notification, onNotificationSuccess);
+        }
+
+        else if (notificationType == notificationTypes.PLAYER_SEND_TRANSACTION_REQUEST ||
+                 notificationType == notificationTypes.PLAYER_REQUEST_TRANSACTION_REQUEST) {
+            sendPlayerTransactionRequestNotification(notification, onNotificationSuccess);
         }
 
 
@@ -108,7 +124,7 @@ function sendBankTransactionRequestNotification(notification, onSuccess) {
     var paymentAmount = notification.paymentAmount;
     var notificationType = notification.notificationType;
 
-    console.log('sendStartGameNotification: Trying to send' + notificationType +' to ' + gameId + '-Host');
+    console.log('sendBankTransactionRequestNotification: Trying to send' + notificationType +' to ' + gameId + '-Host');
 
     request({
         url: 'https://fcm.googleapis.com/fcm/send',
@@ -139,10 +155,53 @@ function sendBankTransactionRequestNotification(notification, onSuccess) {
                 }
                 else {
                     onSuccess();
-                    console.log('sendStartGameNotification: Successfully sent ' + notificationType + ' notification');
+                    console.log('sendBankTransactionRequestNotification: Successfully sent ' + notificationType + ' notification');
                 }
         });
 
+}
+
+function sendPlayerTransactionRequestNotification(notification, onSuccess) {
+    var gameId = notification.gameId;
+    var playerId = notification.playerId;
+    var recipientId = notification.recipientId;
+    var paymentAmount = notification.paymentAmount;
+    var notificationType = notification.notificationType;
+
+    console.log('sendPlayerTransactionRequestNotification: Trying to send' + notificationType +' to ' + gameId + recipientId);
+
+    request({
+        url: 'https://fcm.googleapis.com/fcm/send',
+        method: 'POST',
+        headers: {
+            'Content-Type' :' application/json',
+            'Authorization': 'key='+API_KEY
+        },
+
+        body: JSON.stringify({
+
+            data: {
+                "GAME_ID" : gameId,
+                "PLAYER_ID" : playerId,
+                "PAYMENT_AMOUNT" : paymentAmount
+            },
+            notification: {
+                body: notificationType,
+            },
+            to : '/topics/' + gameId + recipientId
+        })
+        },
+
+        function(error, response, body) {
+            if (error) { console.error(error); }
+                else if (response.statusCode >= 400) {
+                    console.error('HTTP Error: ' + response.statusCode+' - ' + response.statusMessage);
+                }
+                else {
+                    onSuccess();
+                    console.log('sendPlayerTransactionRequestNotification: Successfully sent ' + notificationType + ' notification');
+                }
+        });
 }
 
 function sendNotificationToUser(username, message, onSuccess) {

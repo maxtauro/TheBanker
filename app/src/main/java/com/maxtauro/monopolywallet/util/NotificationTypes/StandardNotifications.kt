@@ -19,8 +19,8 @@ enum class StandardNotifications {
     BANK_DEBIT_CONFIRMATION,
 
     //P2P Transaction Notification
-
-
+    PLAYER_SEND_TRANSACTION_REQUEST,
+    PLAYER_REQUEST_TRANSACTION_REQUEST,
 
     //Generic notification, used when notification type does not matter
     GENERIC_NOTIFICATION

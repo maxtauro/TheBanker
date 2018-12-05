@@ -1,6 +1,7 @@
 package com.maxtauro.monopolywallet.util
 
 import com.google.firebase.database.FirebaseDatabase
+import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerTransactionRequestNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 import java.lang.NullPointerException
 
@@ -44,6 +45,41 @@ class FirebaseNotificationUtil(val gameId: String) {
 
         sendNotification(notification)
 
+    }
+
+    fun sendSendMoneyNotification(paymentAmount: Int, playerId: String?, recipientId: String) {
+
+        if (playerId == null) {
+            TODO("Implement Error handling framework")
+        }
+
+        val notificationBuilder = NotificationBuilder()
+        notificationBuilder.setGameAndNotificationType(gameId, StandardNotifications.PLAYER_SEND_TRANSACTION_REQUEST)
+
+        notificationBuilder.addItem("paymentAmount", paymentAmount)
+        notificationBuilder.addItem("playerId", playerId)
+        notificationBuilder.addItem(PlayerTransactionRequestNotification.MessageDataFields.RECIPIENT_ID.toString(), recipientId)
+
+        val notification = notificationBuilder.build()
+        sendNotification(notification)
+
+    }
+
+    fun sendRequestMoneyNotification(paymentAmount: Int, playerId: String?, recipientId: String) {
+
+        if (playerId == null) {
+            TODO("Implement Error handling framework")
+        }
+
+        val notificationBuilder = NotificationBuilder()
+        notificationBuilder.setGameAndNotificationType(gameId, StandardNotifications.PLAYER_REQUEST_TRANSACTION_REQUEST)
+
+        notificationBuilder.addItem("paymentAmount", paymentAmount)
+        notificationBuilder.addItem("playerId", playerId)
+        notificationBuilder.addItem(PlayerTransactionRequestNotification.MessageDataFields.RECIPIENT_ID.toString(), recipientId)
+
+        val notification = notificationBuilder.build()
+        sendNotification(notification)
     }
 
     private fun sendNotification(notification: HashMap<String, Any>) {
