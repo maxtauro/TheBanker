@@ -1,4 +1,4 @@
-package com.maxtauro.monopolywallet
+package com.maxtauro.monopolywallet.Activities
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -14,7 +14,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.maxtauro.monopolywallet.GameDao
 import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
+import com.maxtauro.monopolywallet.Player
+import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
 import com.maxtauro.monopolywallet.util.TopicSubscriptionUtil

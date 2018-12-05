@@ -6,8 +6,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.GameDao
-import com.maxtauro.monopolywallet.HostGame
-import com.maxtauro.monopolywallet.JoinGame
+import com.maxtauro.monopolywallet.Activities.HostGame
+import com.maxtauro.monopolywallet.Activities.JoinGame
 import com.maxtauro.monopolywallet.service.NotificationService
 import com.maxtauro.monopolywallet.util.NotificationTypes.BankTransactionRequestNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification

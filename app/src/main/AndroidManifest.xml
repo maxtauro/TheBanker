@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".StartPage"
+            android:name=".Activities.StartPage"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -21,16 +21,16 @@
         </activity>
 
         <activity
-            android:name=".HostLobby"
+            android:name=".Activities.HostLobby"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".JoinLobby"
+            android:name=".Activities.JoinLobby"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".HostGame"
+            android:name=".Activities.HostGame"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".JoinGame"
+            android:name=".Activities.JoinGame"
             android:theme="@style/AppTheme.NoActionBar"/>
 
 

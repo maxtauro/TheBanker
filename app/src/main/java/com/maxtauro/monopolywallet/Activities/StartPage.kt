@@ -1,4 +1,4 @@
-package com.maxtauro.monopolywallet
+package com.maxtauro.monopolywallet.Activities
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentCreateGame
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentJoinGame
+import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 
 /**

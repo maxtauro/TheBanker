@@ -11,8 +11,8 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.maxtauro.monopolywallet.HostGame
-import com.maxtauro.monopolywallet.JoinGame
+import com.maxtauro.monopolywallet.Activities.HostGame
+import com.maxtauro.monopolywallet.Activities.JoinGame
 import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.BankTransactionEnums
 import com.maxtauro.monopolywallet.util.FirebaseHelper
