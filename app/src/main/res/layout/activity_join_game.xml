@@ -14,7 +14,7 @@
         android:layout_height="match_parent" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/non_host_notification_list_recycler"
+        android:id="@+id/notification_list_recycler"
         android:layout_width="320dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"

@@ -27,10 +27,10 @@
             android:name=".Activities.JoinLobby"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".Activities.HostGame"
+            android:name=".Activities.HostGameActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".Activities.JoinGame"
+            android:name=".Activities.NonHostGameActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
 

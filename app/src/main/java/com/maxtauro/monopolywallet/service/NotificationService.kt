@@ -11,8 +11,8 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import com.maxtauro.monopolywallet.Activities.HostGame
-import com.maxtauro.monopolywallet.Activities.JoinGame
+import com.maxtauro.monopolywallet.Activities.HostGameActivity
+import com.maxtauro.monopolywallet.Activities.NonHostGameActivity
 import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.BankTransactionEnums
 import com.maxtauro.monopolywallet.util.FirebaseHelper
@@ -73,11 +73,11 @@ class NotificationService : FirebaseMessagingService() {
         val startGameIntent: Intent
 
         startGameIntent = if (gameHostId == auth.uid) {
-            Intent(this, HostGame::class.java)
+            Intent(this, HostGameActivity::class.java)
         }
 
         else {
-            Intent(this, JoinGame::class.java)
+            Intent(this, NonHostGameActivity::class.java)
         }
 
         sendNotification(remoteMessage.notification!!.body!!)

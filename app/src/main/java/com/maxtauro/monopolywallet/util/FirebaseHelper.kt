@@ -6,8 +6,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.GameDao
-import com.maxtauro.monopolywallet.Activities.HostGame
-import com.maxtauro.monopolywallet.Activities.JoinGame
+import com.maxtauro.monopolywallet.Activities.HostGameActivity
+import com.maxtauro.monopolywallet.Activities.NonHostGameActivity
 import com.maxtauro.monopolywallet.service.NotificationService
 import com.maxtauro.monopolywallet.util.NotificationTypes.BankTransactionRequestNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
@@ -225,13 +225,13 @@ class FirebaseHelper(val gameId: String) {
                     val gameHostId = dataSnapshot.value
 
                     if (gameHostId == uid) {
-                        val startGameIntent = Intent(notificationService, HostGame::class.java)
+                        val startGameIntent = Intent(notificationService, HostGameActivity::class.java)
                         startGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         notificationService.startActivity(startGameIntent)
                     }
 
                     else {
-                        val startGameIntent = Intent(notificationService, JoinGame::class.java)
+                        val startGameIntent = Intent(notificationService, NonHostGameActivity::class.java)
                         startGameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         notificationService.startActivity(startGameIntent)
                     }

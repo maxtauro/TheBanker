@@ -47,7 +47,7 @@ class StartPage : AppCompatActivity() {
 //            dialogJoinGame.show(supportFragmentManager, "join game dialog")
 
             //TODO REMOVE THIS, TEMP FOR MAKING UI
-            val tempHostIntent = Intent(this, JoinGame::class.java)
+            val tempHostIntent = Intent(this, NonHostGameActivity::class.java)
             tempHostIntent.putExtra("gameId", "10f0e4")
             startActivity(tempHostIntent)
         }
@@ -57,7 +57,7 @@ class StartPage : AppCompatActivity() {
 //            dialogCreateGame.show(supportFragmentManager, "create game dialog")
 //
             //TODO REMOVE THIS, TEMP FOR MAKING UI
-            val tempHostIntent = Intent(this, HostGame::class.java)
+            val tempHostIntent = Intent(this, HostGameActivity::class.java)
             tempHostIntent.putExtra("gameId", "10f0e4")
             startActivity(tempHostIntent)
         }
