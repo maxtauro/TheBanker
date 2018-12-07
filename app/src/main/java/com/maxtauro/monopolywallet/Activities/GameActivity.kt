@@ -142,6 +142,9 @@ abstract class GameActivity: AppCompatActivity() {
                     dialogFragmentPlayerTransaction.arguments = bundle
                     dialogFragmentPlayerTransaction.show(supportFragmentManager, "DialogFragmentBankDebit")
                 }
+
+                // Users should not see themselves listed in their own game
+                if (auth.uid == player.playerId) holder.hideEntry()
             }
         }
 
@@ -178,6 +181,7 @@ abstract class GameActivity: AppCompatActivity() {
                 holder.itemView.setOnClickListener {
                     DialogTransactionConfirmation.newInstance(notification).show(supportFragmentManager, "DialogTransactionConfirmation")
                 }
+
             }
         }
 
