@@ -24,7 +24,7 @@ import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
-import com.maxtauro.monopolywallet.util.IntentExtrasConstants
+import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 
 abstract class GameActivity: AppCompatActivity() {
@@ -39,7 +39,7 @@ abstract class GameActivity: AppCompatActivity() {
     protected lateinit var listPlayersRecyclerView: RecyclerView
     lateinit var layoutManager: RecyclerView.LayoutManager
 
-    //Notifications RecyelerView
+    //Notifications RecyclerView
     lateinit var playerGameNotificationsListAdapter: FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>
     lateinit var playerGameNotificationListRecyclerView: RecyclerView
     lateinit var playerGameNotificationListLayoutManager: RecyclerView.LayoutManager
@@ -188,7 +188,6 @@ abstract class GameActivity: AppCompatActivity() {
         playerGameNotificationsListAdapter.startListening()
         playerGameNotificationListRecyclerView.adapter = playerGameNotificationsListAdapter
     }
-
 
     private fun createLayoutManager(): RecyclerView.LayoutManager {
         var layoutManager = LinearLayoutManager(this)

@@ -14,10 +14,10 @@ import com.google.firebase.messaging.RemoteMessage
 import com.maxtauro.monopolywallet.Activities.HostGameActivity
 import com.maxtauro.monopolywallet.Activities.NonHostGameActivity
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.BankTransactionEnums
+import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
 import com.maxtauro.monopolywallet.util.FirebaseHelper
 import com.maxtauro.monopolywallet.util.NotificationTypes.*
-import com.maxtauro.monopolywallet.util.PlayerTransactionEnum
+import com.maxtauro.monopolywallet.Constants.PlayerTransactionEnum
 
 /**
  * TODO add authoring, date, and desc
@@ -111,6 +111,7 @@ class NotificationService : FirebaseMessagingService() {
         //If the current user is the host, the bank transaction does not need to be approved, so it is processed right away
         if (auth.uid == hostUid) firebaseHelper.processBankPayment(paymentIntentNotification, creditDebit)
         else firebaseHelper.createPayBankIntentRequest(paymentIntentNotification, creditDebit)
+
         //TODO toast and icon to indicate there is a payment awaiting approval
     }
 

@@ -1,4 +1,4 @@
-package com.maxtauro.monopolywallet.util
+package com.maxtauro.monopolywallet.Constants
 
 class IntentExtrasConstants {
 

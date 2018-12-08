@@ -1,6 +1,6 @@
 package com.maxtauro.monopolywallet.DialogFragments
 
-import com.maxtauro.monopolywallet.util.BankTransactionEnums
+import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
 import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
 
 /**

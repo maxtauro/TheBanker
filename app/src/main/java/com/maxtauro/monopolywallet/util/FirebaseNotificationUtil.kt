@@ -1,9 +1,9 @@
 package com.maxtauro.monopolywallet.util
 
 import com.google.firebase.database.FirebaseDatabase
+import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerTransactionRequestNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
-import java.lang.NullPointerException
 
 /**
  * Util Class for sending Firebase Notifications

@@ -7,10 +7,9 @@ import android.support.v4.app.DialogFragment
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.RadioGroup
 import com.google.firebase.auth.FirebaseAuth
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.IntentExtrasConstants
+import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
 
 /**
  * Base class for selecting payment amounts

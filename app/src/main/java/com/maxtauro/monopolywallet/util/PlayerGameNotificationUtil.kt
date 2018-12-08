@@ -1,5 +1,7 @@
 package com.maxtauro.monopolywallet.util
 
+import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
+import com.maxtauro.monopolywallet.Constants.PlayerTransactionEnum
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
