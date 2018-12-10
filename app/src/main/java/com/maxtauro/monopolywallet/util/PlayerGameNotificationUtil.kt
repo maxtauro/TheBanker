@@ -2,6 +2,7 @@ package com.maxtauro.monopolywallet.util
 
 import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
 import com.maxtauro.monopolywallet.Constants.PlayerTransactionEnum
+import com.maxtauro.monopolywallet.Firebase.FirebaseTransactionHelper
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
@@ -23,30 +24,28 @@ class PlayerGameNotificationUtil {
         }
 
         fun declineNotification(playerGameNotification: PlayerGameNotification) {
-            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
-            firebaseHelper.declineNotification(playerGameNotification)
+            val firebaseTransactionHelper = FirebaseTransactionHelper(playerGameNotification.gameId)
+            firebaseTransactionHelper.declineNotification(playerGameNotification)
         }
 
         private fun confirmBankCreditTransaction(playerGameNotification: PlayerGameNotification) {
-            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
-            firebaseHelper.processBankPayment(playerGameNotification, BankTransactionEnums.CREDIT)
+            val firebaseTransactionHelper = FirebaseTransactionHelper(playerGameNotification.gameId)
+            firebaseTransactionHelper.processBankPayment(playerGameNotification, BankTransactionEnums.CREDIT)
         }
 
         private fun confirmBankPaymentIntent(playerGameNotification: PlayerGameNotification) {
-            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
-            firebaseHelper.processBankPayment(playerGameNotification, BankTransactionEnums.DEBIT)
+            val firebaseTransactionHelper = FirebaseTransactionHelper(playerGameNotification.gameId)
+            firebaseTransactionHelper.processBankPayment(playerGameNotification, BankTransactionEnums.DEBIT)
         }
 
         private fun confirmPlayerSendTransaction(playerGameNotification: PlayerGameNotification) {
-            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
-            firebaseHelper.processPlayerTransaction(playerGameNotification, PlayerTransactionEnum.SEND_MONEY)
-
+            val firebaseTransactionHelper = FirebaseTransactionHelper(playerGameNotification.gameId)
+            firebaseTransactionHelper.processPlayerTransaction(playerGameNotification, PlayerTransactionEnum.SEND_MONEY)
         }
 
         private fun confirmPlayerRequestTransaction(playerGameNotification: PlayerGameNotification) {
-            val firebaseHelper = FirebaseHelper(playerGameNotification.gameId)
-            firebaseHelper.processPlayerTransaction(playerGameNotification, PlayerTransactionEnum.REQUEST_MONEY)
-
+            val firebaseTransactionHelper = FirebaseTransactionHelper(playerGameNotification.gameId)
+            firebaseTransactionHelper.processPlayerTransaction(playerGameNotification, PlayerTransactionEnum.REQUEST_MONEY)
         }
 
     }

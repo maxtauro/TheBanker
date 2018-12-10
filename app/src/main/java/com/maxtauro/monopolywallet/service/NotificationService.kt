@@ -15,9 +15,10 @@ import com.maxtauro.monopolywallet.Activities.HostGameActivity
 import com.maxtauro.monopolywallet.Activities.NonHostGameActivity
 import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
-import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 import com.maxtauro.monopolywallet.util.NotificationTypes.*
 import com.maxtauro.monopolywallet.Constants.PlayerTransactionEnum
+import com.maxtauro.monopolywallet.Firebase.FirebaseTransactionHelper
 
 /**
  * TODO add authoring, date, and desc
@@ -105,12 +106,12 @@ class NotificationService : FirebaseMessagingService() {
                 else StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION
 
         val paymentIntentNotification = BankTransactionRequestNotification(gameId, payerId, paymentAmount, notificationType)
-        val firebaseHelper = FirebaseHelper(gameId)
+        val firebaseTransactionHelper = FirebaseTransactionHelper(gameId)
         val hostUid = FirebaseHelper.getGameHostUid(gameId)
 
-        //If the current user is the host, the bank transaction does not need to be approved, so it is processed right away
-        if (auth.uid == hostUid) firebaseHelper.processBankPayment(paymentIntentNotification, creditDebit)
-        else firebaseHelper.createPayBankIntentRequest(paymentIntentNotification, creditDebit)
+        //If the payer is the host, the bank transaction does not need to be approved, so it is processed right away
+        if (payerId == hostUid) firebaseTransactionHelper.processBankPayment(paymentIntentNotification, creditDebit)
+        else firebaseTransactionHelper.createPayBankIntentRequest(paymentIntentNotification, creditDebit)
 
         //TODO toast and icon to indicate there is a payment awaiting approval
     }

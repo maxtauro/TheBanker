@@ -15,7 +15,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentCreateGame
 import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentJoinGame
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 
 /**
  * Starting Activity for the application

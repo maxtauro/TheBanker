@@ -22,7 +22,7 @@ import com.maxtauro.monopolywallet.ListViewHolder.PlayerGameNotificationsListVie
 import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
 import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
@@ -118,7 +118,7 @@ abstract class GameActivity: AppCompatActivity() {
         listPlayersRecyclerView.layoutManager = layoutManager
 
         val options = FirebaseRecyclerOptions.Builder<Player>()
-                .setQuery(firebaseHelper.playerListRef, Player::class.java)
+                .setQuery(firebaseHelper.playerListRef.orderByChild("playerId"), Player::class.java)
                 .build()
 
         adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
@@ -131,20 +131,26 @@ abstract class GameActivity: AppCompatActivity() {
             }
 
             override fun onBindViewHolder(holder: PlayerListViewHolder, position: Int, player: Player) {
-                holder.txtPlayerName.text = player.playerName
-                holder.playerId = player.playerId
-                holder.itemView.setOnClickListener {
-                    val dialogFragmentPlayerTransaction = DialogFragmentPlayerTransaction()
-
-                    val bundle = Bundle()
-                    bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
-                    bundle.putString(IntentExtrasConstants.RECIPIENT_ID_EXTRA, player.playerId)
-                    dialogFragmentPlayerTransaction.arguments = bundle
-                    dialogFragmentPlayerTransaction.show(supportFragmentManager, "DialogFragmentBankDebit")
-                }
 
                 // Users should not see themselves listed in their own game
-                if (auth.uid == player.playerId) holder.hideEntry()
+                if (auth.uid == player.playerId && false) {
+                    //TODO fix the bug where all entries disappear on any firebase changes
+//                    holder.hideEntry()
+                }
+
+                else {
+                    holder.txtPlayerName.text = player.playerName
+                    holder.playerId = player.playerId
+                    holder.itemView.setOnClickListener {
+                        val dialogFragmentPlayerTransaction = DialogFragmentPlayerTransaction()
+
+                        val bundle = Bundle()
+                        bundle.putString(IntentExtrasConstants.GAME_ID_EXTRA, firebaseHelper.gameId)
+                        bundle.putString(IntentExtrasConstants.RECIPIENT_ID_EXTRA, player.playerId)
+                        dialogFragmentPlayerTransaction.arguments = bundle
+                        dialogFragmentPlayerTransaction.show(supportFragmentManager, "DialogFragmentBankDebit")
+                    }
+                }
             }
         }
 

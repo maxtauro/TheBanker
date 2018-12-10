@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.RadioGroup
 import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
 import com.maxtauro.monopolywallet.Constants.PlayerTransactionEnum
+import com.maxtauro.monopolywallet.Firebase.FirebaseTransactionHelper
 import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.util.*
 
@@ -40,19 +41,19 @@ class DialogFragmentPlayerTransaction: DialogFragmentPaymentBase() {
 
     override fun onPositiveButtonClick(paymentAmount: Int) {
         val notificationUtil = FirebaseNotificationUtil(gameId)
-        val firebaseHelper = FirebaseHelper(gameId)
+        val firebaseTransactionHelper = FirebaseTransactionHelper(gameId)
 
         if (auth.uid == recipientId) return
 
         when (tranType) {
             PlayerTransactionEnum.SEND_MONEY -> {
                 notificationUtil.sendSendMoneyNotification(paymentAmount, auth.uid, recipientId)
-                firebaseHelper.createSendMoneyRequest(paymentAmount, auth.uid, recipientId)
+                firebaseTransactionHelper.createSendMoneyRequest(paymentAmount, auth.uid, recipientId)
             }
 
             PlayerTransactionEnum.REQUEST_MONEY -> {
                 notificationUtil.sendRequestMoneyNotification(paymentAmount, auth.uid, recipientId)
-                firebaseHelper.createRequestMoneyRequest(paymentAmount, auth.uid, recipientId)
+                firebaseTransactionHelper.createRequestMoneyRequest(paymentAmount, auth.uid, recipientId)
             }
         }
     }

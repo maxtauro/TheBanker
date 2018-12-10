@@ -18,7 +18,7 @@ import com.maxtauro.monopolywallet.GameDao
 import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
 import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.R
-import com.maxtauro.monopolywallet.util.FirebaseHelper
+import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
 import com.maxtauro.monopolywallet.util.TopicSubscriptionUtil
 
