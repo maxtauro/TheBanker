@@ -6,6 +6,7 @@
 
     <!--General UI -->
     <string name="game_id">Game Id:</string>
+    <string name="ok_button_label">Ok</string>
     <string name="cancel_button_label">Cancel</string>
     <string name="txt_player_balance">Balance: </string>
 
@@ -18,7 +19,8 @@
     <string name="nickname_input_hint">Nickname</string>
     <string name="join_lobby_leave_string">Leave</string>
     <string name="pay_bank_button_label">Pay</string>
-
+    <string name="host_lose_string">You have run out of money! As the Banker you must keep observing the game and confirming payments</string>
+    <string name="non_host_lose_string">You have run out of money! You will be taken to the home screen</string>
 
     <!--Host Lobby-->
     <string name="host_lobby_start_button_string">Start</string>

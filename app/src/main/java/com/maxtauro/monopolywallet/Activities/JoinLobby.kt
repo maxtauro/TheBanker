@@ -88,7 +88,7 @@ class JoinLobby:  AppCompatActivity() {
 
         val btnStart = findViewById<Button>(R.id.btn_leave)
         btnStart.setOnClickListener {
-            firebaseHelper.leaveGame(playerName)
+            firebaseHelper.leaveGame(auth.uid!!)
             finish()
         }
     }

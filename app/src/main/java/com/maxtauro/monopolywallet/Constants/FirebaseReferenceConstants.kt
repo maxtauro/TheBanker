@@ -18,6 +18,7 @@ open class FirebaseReferenceConstants {
         const val HOST_NAME_NODE_KEY = "hostName"
         const val PLAYER_NOTIFICATION_LIST_KEY = "notificationList"
         const val PLAYER_NOTIFICATION_KEY_KEY = "notificationKey"
+        const val PLAYER_ACTIVE_NODE_KEY = "isActive"
     }
 
 

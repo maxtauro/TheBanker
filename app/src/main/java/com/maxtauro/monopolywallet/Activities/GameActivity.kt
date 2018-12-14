@@ -14,10 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPlayerTransaction
-import com.maxtauro.monopolywallet.DialogFragments.DialogTransactionConfirmation
+import com.maxtauro.monopolywallet.Constants.FirebaseReferenceConstants
 import com.maxtauro.monopolywallet.ListViewHolder.PlayerGameNotificationsListViewHolder
 import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
 import com.maxtauro.monopolywallet.Player
@@ -25,9 +22,12 @@ import com.maxtauro.monopolywallet.R
 import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
+import com.maxtauro.monopolywallet.DialogFragments.*
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
 
 abstract class GameActivity: AppCompatActivity() {
+
+    var isHost = false
 
     //Firebase
     protected lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
@@ -35,9 +35,11 @@ abstract class GameActivity: AppCompatActivity() {
     lateinit var auth: FirebaseAuth
 
     //RecyclerView
-    protected lateinit var adapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
+    protected lateinit var playerListAdapter: FirebaseRecyclerAdapter<Player, PlayerListViewHolder>
     protected lateinit var listPlayersRecyclerView: RecyclerView
     lateinit var layoutManager: RecyclerView.LayoutManager
+    lateinit var playerListOptions: FirebaseRecyclerOptions<Player>
+    lateinit var notificationListOptions:  FirebaseRecyclerOptions<PlayerGameNotification>
 
     //Notifications RecyclerView
     lateinit var playerGameNotificationsListAdapter: FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>
@@ -93,6 +95,10 @@ abstract class GameActivity: AppCompatActivity() {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 txtPlayerBalance.text = playerBalanceString + dataSnapshot.value
+
+                if (dataSnapshot.value as Long <= 0) {
+                    loseGame()
+                }
             }
 
             override fun onCancelled(dbError: DatabaseError) {
@@ -103,8 +109,17 @@ abstract class GameActivity: AppCompatActivity() {
 
         playerBalanceRef.addValueEventListener(balanceListener)
 
+        playerListOptions = FirebaseRecyclerOptions.Builder<Player>()
+                .setQuery(firebaseHelper.playerListRef.orderByChild(FirebaseReferenceConstants.PLAYER_ACTIVE_NODE_KEY).equalTo(true), Player::class.java)
+                .build()
+        notificationListOptions = FirebaseRecyclerOptions.Builder<PlayerGameNotification>()
+                .setQuery(firebaseReferenceUtil.getPlayerNotificationRef(auth.uid!!), PlayerGameNotification::class.java)
+                .build()
+
         initRecyclerViews()
     }
+
+
 
     private fun initRecyclerViews() {
         playerListInit()
@@ -117,11 +132,8 @@ abstract class GameActivity: AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         listPlayersRecyclerView.layoutManager = layoutManager
 
-        val options = FirebaseRecyclerOptions.Builder<Player>()
-                .setQuery(firebaseHelper.playerListRef.orderByChild("playerId"), Player::class.java)
-                .build()
 
-        adapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(options) {
+        playerListAdapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(playerListOptions) {
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerListViewHolder {
                 val view = LayoutInflater.from(parent.context)
@@ -154,8 +166,8 @@ abstract class GameActivity: AppCompatActivity() {
             }
         }
 
-        adapter.startListening()
-        listPlayersRecyclerView.adapter = adapter
+        playerListAdapter.startListening()
+        listPlayersRecyclerView.adapter = playerListAdapter
     }
 
     private fun notificationListInit() {
@@ -165,11 +177,8 @@ abstract class GameActivity: AppCompatActivity() {
         playerGameNotificationListLayoutManager = createLayoutManager()
         playerGameNotificationListRecyclerView.layoutManager = playerGameNotificationListLayoutManager
 
-        val options = FirebaseRecyclerOptions.Builder<PlayerGameNotification>()
-                .setQuery(firebaseReferenceUtil.getPlayerNotificationRef(auth.uid!!), PlayerGameNotification::class.java)
-                .build()
 
-        playerGameNotificationsListAdapter = object : FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>(options) {
+        playerGameNotificationsListAdapter = object : FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>(notificationListOptions) {
 
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerGameNotificationsListViewHolder {
                 val view = LayoutInflater.from(parent.context)
@@ -199,5 +208,15 @@ abstract class GameActivity: AppCompatActivity() {
         var layoutManager = LinearLayoutManager(this)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         return layoutManager
+    }
+
+    protected open fun loseGame() {
+        firebaseHelper.setPlayerIsActive(auth.uid!!, false)
+
+        val dialogFragmentLoseGame = DialogFragmentLoseGame()
+        val bundle = Bundle()
+        bundle.putBoolean(IntentExtrasConstants.IS_HOST_EXTRA, isHost)
+        dialogFragmentLoseGame.arguments = bundle
+        dialogFragmentLoseGame.show(supportFragmentManager, "DialogFragmentLoseGame")
     }
 }

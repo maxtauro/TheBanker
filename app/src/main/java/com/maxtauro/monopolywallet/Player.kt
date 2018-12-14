@@ -8,9 +8,11 @@ class Player {
     var playerName: String
     var playerId: String
     var playerBalance: Int = 1500
+    var isActive = true
 
-    // Need a no argument ctor for firebase, you should NEVER call this explicitly
+    @Deprecated("Need a no argument ctor for firebase, you should NEVER call this explicitly")
     constructor() {
+        isActive = false // If a malformed player entry is created, it will be hidden
         playerName = "didn't init"
         playerId = "id didn't init"
     }

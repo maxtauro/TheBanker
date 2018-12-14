@@ -20,4 +20,16 @@ class NonHostGameActivity :  GameActivity() {
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
     }
+
+    override fun loseGame() {
+        super.loseGame()
+        //Notify about loss
+        //bring to home screen?
+        //TODO()
+    }
+
+    fun nonHostLeaveGame() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 }

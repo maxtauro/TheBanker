@@ -79,8 +79,8 @@ open class FirebaseHelper(val gameId: String) {
         firebaseReferenceUtil.databaseRef.child(gameId).removeValue()
     }
 
-    fun leaveGame(playerName: String) {
-        playerListRef.child(playerName).removeValue()
+    fun leaveGame(playerId: String) {
+        playerListRef.child(playerId).removeValue()
     }
 
     //TODO change this from a pair, its to confusing
@@ -98,6 +98,9 @@ open class FirebaseHelper(val gameId: String) {
                 }
     }
 
+    fun setPlayerIsActive(playerId: String, isActive: Boolean) {
+        playerListRef.child(playerId).child(FirebaseReferenceConstants.PLAYER_ACTIVE_NODE_KEY).setValue(isActive)
+    }
 
 
     companion object {
