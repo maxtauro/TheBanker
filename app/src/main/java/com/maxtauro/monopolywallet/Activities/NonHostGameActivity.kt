@@ -1,5 +1,6 @@
 package com.maxtauro.monopolywallet.Activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.ActionBarDrawerToggle
 import com.maxtauro.monopolywallet.R
@@ -21,15 +22,10 @@ class NonHostGameActivity :  GameActivity() {
         toggle.syncState()
     }
 
-    override fun loseGame() {
-        super.loseGame()
-        //Notify about loss
-        //bring to home screen?
-        //TODO()
-    }
-
     fun nonHostLeaveGame() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val startPageIntent = Intent(this, StartPage::class.java)
+        startActivity(startPageIntent)
+        finish()
     }
 
 }

@@ -6,13 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankCredit
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentBankDebit
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentLoseGame
-import com.maxtauro.monopolywallet.DialogFragments.DialogFragmentPlayerTransaction
 import com.maxtauro.monopolywallet.ListViewHolder.PlayerListViewHolder
 import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.R
@@ -39,6 +34,9 @@ class HostGameActivity:  GameActivity() {
     }
 
     fun enableHostGameLostMode() {
+        val txtPlayerBalance: TextView = findViewById(R.id.txt_player_balance)
+        txtPlayerBalance.visibility = View.INVISIBLE
+
         removeButtons()
         disablePlayerTransactions()
     }

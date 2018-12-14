@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import com.maxtauro.monopolywallet.Activities.HostGameActivity
 import com.maxtauro.monopolywallet.Activities.NonHostGameActivity
-import com.maxtauro.monopolywallet.Activities.StartPage
 import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
 import com.maxtauro.monopolywallet.R
 
@@ -27,18 +26,22 @@ class DialogFragmentLoseGame: DialogFragment() {
                 if (isHost) getString(R.string.host_lose_string)
                 else getString(R.string.non_host_lose_string)
 
-        builder.setTitle(loseMessage)
-        builder.setNeutralButton(R.string.ok_button_label) { _: DialogInterface, _: Int ->
-            if (isHost) {
-                enableHostGameLostMode()
-            }
-
-            else {
-                nonHostLeaveGame()
-            }
-        }
+        builder.setMessage(loseMessage)
+        builder.setNeutralButton(R.string.ok_button_label) { _: DialogInterface, _: Int -> }
 
         return builder.create()
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        if (isHost) {
+            enableHostGameLostMode()
+        }
+
+        else {
+            nonHostLeaveGame()
+        }
+
+        super.onDismiss(dialog)
     }
 
     private fun nonHostLeaveGame() {
