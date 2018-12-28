@@ -11,6 +11,7 @@ enum class StandardNotifications {
     START_GAME_NOTIFICATION,
     END_GAME_NOTIFICATION,
     LEAVE_GAME,
+    WIN_NOTIFICATION,
 
     //Bank Transaction Notifications
     BANK_DEBIT_TRANSACTION_NOTIFICATION,
@@ -23,6 +24,7 @@ enum class StandardNotifications {
     PLAYER_REQUEST_TRANSACTION_REQUEST,
 
     //Generic notification, used when notification type does not matter
-    GENERIC_NOTIFICATION
+    GENERIC_NOTIFICATION,
+
 
 }

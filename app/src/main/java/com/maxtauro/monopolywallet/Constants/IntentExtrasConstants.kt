@@ -7,5 +7,6 @@ class IntentExtrasConstants {
         const val IS_HOST_EXTRA = "isHost"
         const val RECIPIENT_ID_EXTRA = "recipientId"
         const val NOTIFICATION_EXTRA = "notification"
+        const val WINNER_NAME_EXTRA = "winnerName"
     }
 }

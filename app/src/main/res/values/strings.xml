@@ -21,6 +21,8 @@
     <string name="pay_bank_button_label">Pay</string>
     <string name="host_lose_string">You have run out of money! As the Banker you must keep observing the game and confirming payments</string>
     <string name="non_host_lose_string">You have run out of money! You will be taken to the home screen</string>
+    <string name="winner_message_string">Congratulations! All other players have run out of money, you are the winner!</string>
+    <string name="non_winner_message_string">%1$s is the winner! Good game, you will be taken to the home screen</string>
 
     <!--Host Lobby-->
     <string name="host_lobby_start_button_string">Start</string>
@@ -52,6 +54,16 @@
     <string name="invalid_game_id_format_msg">"Game ID consists of 6 alphanumeric chars"</string>
     <string name="payment_input_hint">Enter Payment Amount</string>
     <!--[END] Input Validation Responses-->
+
+    <!--[START] Notification Drawer Strings-->
+    <string name="notification_from_msg">From: %1$s</string>
+    <string name="notification_amount_msg">Amount: $%1$s</string>
+
+    <string name="notification_type_bank_debit_msg">Sending money to bank</string>
+    <string name="notification_type_bank_credit_msg">Collecting money from bank</string>
+    <string name="notification_type_player_transaction_send_msg">Sending money to you</string>
+    <string name="notification_type_player_transaction_request_msg">Requesting money from you</string>
+    <!--[END] Notification Drawer Strings-->
 
 
     <!--TODO TIDY THIS SECTION UP-->

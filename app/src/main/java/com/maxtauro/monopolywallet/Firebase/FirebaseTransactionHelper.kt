@@ -37,18 +37,18 @@ class FirebaseTransactionHelper(gameId: String) : FirebaseHelper(gameId) {
     }
 
     //TODO I should make the following two methods cleaner, there's no need to have both methods if they're this similar
-    fun createSendMoneyRequest(paymentAmount: Int, senderId: String?, recipientId: String) {
+    fun createSendMoneyRequest(paymentAmount: Int, senderId: String?, senderName:String?, recipientId: String) {
         val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(recipientId).push()
-        val playerTransactionRequestNotification = PlayerTransactionRequestNotification(auth.uid!!, gameId, senderId!!, paymentAmount, StandardNotifications.PLAYER_SEND_TRANSACTION_REQUEST)
+        val playerTransactionRequestNotification = PlayerTransactionRequestNotification(auth.uid!!, gameId, senderId!!, senderName!!, paymentAmount, StandardNotifications.PLAYER_SEND_TRANSACTION_REQUEST)
 
         notificationRef.setValue(playerTransactionRequestNotification)
         val requestKey: String = notificationRef.key!!
         notificationRef.child(FirebaseReferenceConstants.PLAYER_NOTIFICATION_KEY_KEY).setValue(requestKey)
     }
 
-    fun createRequestMoneyRequest(paymentAmount: Int, senderId: String?, recipientId: String) {
+    fun createRequestMoneyRequest(paymentAmount: Int, senderId: String?, senderName:String?, recipientId: String) {
         val notificationRef = firebaseReferenceUtil.getPlayerNotificationRef(recipientId).push()
-        val playerTransactionRequestNotification = PlayerTransactionRequestNotification(auth.uid!!, gameId, senderId!!, paymentAmount, StandardNotifications.PLAYER_REQUEST_TRANSACTION_REQUEST)
+        val playerTransactionRequestNotification = PlayerTransactionRequestNotification(auth.uid!!, gameId, senderId!!, senderName!!, paymentAmount, StandardNotifications.PLAYER_REQUEST_TRANSACTION_REQUEST)
 
         notificationRef.setValue(playerTransactionRequestNotification)
         val requestKey: String = notificationRef.key!!

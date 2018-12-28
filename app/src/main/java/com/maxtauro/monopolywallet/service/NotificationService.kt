@@ -19,6 +19,9 @@ import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 import com.maxtauro.monopolywallet.util.NotificationTypes.*
 import com.maxtauro.monopolywallet.Constants.PlayerTransactionEnum
 import com.maxtauro.monopolywallet.Firebase.FirebaseTransactionHelper
+import android.app.ActivityManager
+import com.maxtauro.monopolywallet.Activities.StartPage
+
 
 /**
  * TODO add authoring, date, and desc
@@ -30,6 +33,7 @@ class NotificationService : FirebaseMessagingService() {
 
     override fun onCreate() {
         auth = FirebaseAuth.getInstance()
+
         super.onCreate()
     }
 
@@ -41,6 +45,7 @@ class NotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage?) {
 
         Log.d(TAG, "From: ${remoteMessage?.from}")
+        isForeground("asdf")
 
         // Check if message contains a data payload.
         remoteMessage?.data?.isNotEmpty()?.let {
@@ -53,6 +58,7 @@ class NotificationService : FirebaseMessagingService() {
             Log.d(TAG, "Message Notification Body: ${it.body}")
             when (it.body) {
                 StandardNotifications.START_GAME_NOTIFICATION.toString() -> startGame(remoteMessage)
+                StandardNotifications.END_GAME_NOTIFICATION.toString() -> processEndGameNotification(remoteMessage)
                 StandardNotifications.BANK_DEBIT_TRANSACTION_NOTIFICATION.toString() -> processBankTransactionRequest(remoteMessage, BankTransactionEnums.DEBIT)
                 StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION.toString() -> processBankTransactionRequest(remoteMessage, BankTransactionEnums.CREDIT)
                 StandardNotifications.PLAYER_REQUEST_TRANSACTION_REQUEST.toString() -> processPlayerTransactionRequest(remoteMessage, PlayerTransactionEnum.REQUEST_MONEY)
@@ -62,7 +68,7 @@ class NotificationService : FirebaseMessagingService() {
 
     }
 
-    private fun startGame(remoteMessage: RemoteMessage?) {
+   private fun startGame(remoteMessage: RemoteMessage?) {
 
         val gameIdField = GameStartNotification.MessageDataFields.GAME_ID.toString()
         val gameId = remoteMessage!!.data[gameIdField]
@@ -93,19 +99,21 @@ class NotificationService : FirebaseMessagingService() {
         val gameIdField = PlayerGameNotification.MessageDataFields.GAME_ID.toString()
 
         val payerIdField = PlayerGameNotification.MessageDataFields.PLAYER_ID.toString()
+        val payerNameField = PlayerGameNotification.MessageDataFields.PLAYER_NAME.toString()
         val paymentAmountField = BankTransactionRequestNotification.MessageDataFields.PAYMENT_AMOUNT.toString()
 
         val gameId = remoteMessage.data[gameIdField]
         val payerId = remoteMessage.data[payerIdField]
+        val payerName = remoteMessage.data[payerNameField]
         val paymentAmount = remoteMessage.data[paymentAmountField]?.toInt()
 
-        if (gameId == null || gameId == "" || payerId == null || payerId == "" || paymentAmount == null) TODO("HANDLE BAD NOTIFICATION FOR Payment")
+        if (gameId == null || gameId == "" || payerId == null || payerId == "" || payerName == "" || payerName == null || paymentAmount == null) TODO("HANDLE BAD NOTIFICATION FOR Payment")
 
         val notificationType: StandardNotifications = //TODO, can we just pass this as a parameter?
                 if (creditDebit == BankTransactionEnums.DEBIT) StandardNotifications.BANK_DEBIT_TRANSACTION_NOTIFICATION
                 else StandardNotifications.BANK_CREDIT_TRANSACTION_NOTIFICATION
 
-        val paymentIntentNotification = BankTransactionRequestNotification(gameId, payerId, paymentAmount, notificationType)
+        val paymentIntentNotification = BankTransactionRequestNotification(gameId, payerId, payerName, paymentAmount, notificationType)
         val firebaseTransactionHelper = FirebaseTransactionHelper(gameId)
         val hostUid = FirebaseHelper.getGameHostUid(gameId)
 
@@ -115,6 +123,32 @@ class NotificationService : FirebaseMessagingService() {
 
         //TODO toast and icon to indicate there is a payment awaiting approval
     }
+
+    private fun processEndGameNotification(remoteMessage: RemoteMessage) {
+
+        val winnerIdField = PlayerGameNotification.MessageDataFields.WINNER_ID.toString()
+        val gameIdField = PlayerGameNotification.MessageDataFields.GAME_ID.toString()
+
+        val winnerId = remoteMessage.data[winnerIdField]
+        val gameId = remoteMessage.data[gameIdField]
+        val isHost = isForeground("com.maxtauro.monopolywallet.Activities.HostGameActivity") //TODO there must be a better way to check for the host user
+        val isInGame = isForeground("com.maxtauro.monopolywallet.Activities.NonHostGameActivity")
+        val isWinner = auth.uid == winnerId
+
+        if (isHost) {
+
+            //TODO move game to completed node
+        }
+
+        if (isWinner) {
+            val startPageIntent: Intent = Intent(this, StartPage::class.java)
+            startPageIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            //TODO trigger dialog upon returning to home screen
+            startActivity(startPageIntent)
+        }
+    }
+
+
 
     private fun processPlayerTransactionRequest(remoteMessage: RemoteMessage, playerTransactionType: PlayerTransactionEnum) {
 
@@ -140,6 +174,12 @@ class NotificationService : FirebaseMessagingService() {
         //TODO toast and icon to indicate there is a transaction awaiting approval
     }
 
+    private fun isForeground(myPackage: String): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val runningTaskInfo = manager.getRunningTasks(1)
+        val componentInfo = runningTaskInfo[0].topActivity
+        return componentInfo.className == myPackage
+    }
 
     // [START on_new_token]
     /**

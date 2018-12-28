@@ -59,6 +59,7 @@ class JoinLobby:  AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+
         setupGame()
         setupNotificationServices()
         playerListInit()
@@ -74,6 +75,7 @@ class JoinLobby:  AppCompatActivity() {
         var txtGameId: TextView = findViewById(R.id.txt_game_id) //TODO maybe pull UI elements into another method
         txtGameId.text = "Game #: $gameId"
 
+        firebaseHelper.setDisplayName(playerName)
         firebaseHelper.joinGame(gameId, playerName)
 
         FirebaseMessaging.getInstance().subscribeToTopic(gameId)

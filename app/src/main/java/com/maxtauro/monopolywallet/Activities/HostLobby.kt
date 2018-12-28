@@ -86,6 +86,7 @@ class HostLobby :  AppCompatActivity() {
 
         firebaseHelper = FirebaseHelper(gameId)
 
+        firebaseHelper.setDisplayName(hostName)
         firebaseHelper.createGame(hostName)
         firebaseHelper.joinGame(gameId, hostName)
 

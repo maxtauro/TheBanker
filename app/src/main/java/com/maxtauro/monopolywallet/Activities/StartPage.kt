@@ -44,21 +44,21 @@ class StartPage : AppCompatActivity() {
     private fun setupButtons() {
         val btnJoin = findViewById<Button>(R.id.join_button)
         btnJoin.setOnClickListener {
-//            dialogJoinGame.show(supportFragmentManager, "join game dialog")
+            dialogJoinGame.show(supportFragmentManager, "join game dialog")
 
             //TODO REMOVE THIS, TEMP FOR MAKING UI
             val tempHostIntent = Intent(this, NonHostGameActivity::class.java)
-            tempHostIntent.putExtra("gameId", "10f0e4")
+            tempHostIntent.putExtra("gameId", "eae066")
             startActivity(tempHostIntent)
         }
 
         val btnStart = findViewById<Button>(R.id.start_button)
         btnStart.setOnClickListener {
 //            dialogCreateGame.show(supportFragmentManager, "create game dialog")
-//
+
             //TODO REMOVE THIS, TEMP FOR MAKING UI
             val tempHostIntent = Intent(this, HostGameActivity::class.java)
-            tempHostIntent.putExtra("gameId", "10f0e4")
+            tempHostIntent.putExtra("gameId", "779f6a")
             startActivity(tempHostIntent)
         }
     }
@@ -80,6 +80,7 @@ class StartPage : AppCompatActivity() {
     }
 
     fun createGame(hostName : String) {
+
         val hostLobbyIntent = Intent(this, HostLobby::class.java)
         hostLobbyIntent.putExtra("hostName", hostName)
         startActivity(hostLobbyIntent)
@@ -127,7 +128,6 @@ class StartPage : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInAnonymously:success")
-                    val user = auth.currentUser
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInAnonymously:failure", task.exception)

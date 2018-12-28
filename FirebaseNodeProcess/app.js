@@ -33,6 +33,7 @@ var ref = admin.database().ref();
 
 var notificationTypes = Object.freeze({
     START_GAME_NOTIFICATION : 'START_GAME_NOTIFICATION',
+    END_GAME_NOTIFICATION : 'END_GAME_NOTIFICATION',
 
     BANK_DEBIT_TRANSACTION_NOTIFICATION : 'BANK_DEBIT_TRANSACTION_NOTIFICATION',
     BANK_CREDIT_TRANSACTION_NOTIFICATION : 'BANK_CREDIT_TRANSACTION_NOTIFICATION',
@@ -67,6 +68,9 @@ function listenForNotificationRequests() {
             sendPlayerTransactionRequestNotification(notification, onNotificationSuccess);
         }
 
+        else if (notificationType == notificationTypes.END_GAME_NOTIFICATION) {
+            sendEndGameNotification(notification, onNotificationSuccess)
+        }
 
         else {
             console.log('Failed to recognize notification type: ' + notificationType);
@@ -76,8 +80,6 @@ function listenForNotificationRequests() {
         console.error(error);
     });
 };
-
-
 
 function sendStartGameNotification(notification, onSuccess) {
 
@@ -121,6 +123,7 @@ function sendBankTransactionRequestNotification(notification, onSuccess) {
 
     var gameId = notification.gameId;
     var playerId = notification.playerId;
+    var playerName = notification.playerName;
     var paymentAmount = notification.paymentAmount;
     var notificationType = notification.notificationType;
 
@@ -139,6 +142,7 @@ function sendBankTransactionRequestNotification(notification, onSuccess) {
             data: {
                 "GAME_ID" : gameId,
                 "PLAYER_ID" : playerId,
+                "PLAYER_NAME" : playerName,
                 "PAYMENT_AMOUNT" : paymentAmount
             },
             notification: {
@@ -164,6 +168,7 @@ function sendBankTransactionRequestNotification(notification, onSuccess) {
 function sendPlayerTransactionRequestNotification(notification, onSuccess) {
     var gameId = notification.gameId;
     var playerId = notification.playerId;
+    var playerName = notification.playerName;
     var recipientId = notification.recipientId;
     var paymentAmount = notification.paymentAmount;
     var notificationType = notification.notificationType;
@@ -183,6 +188,7 @@ function sendPlayerTransactionRequestNotification(notification, onSuccess) {
             data: {
                 "GAME_ID" : gameId,
                 "PLAYER_ID" : playerId,
+                "PLAYER_NAME" : playerName,
                 "PAYMENT_AMOUNT" : paymentAmount
             },
             notification: {
@@ -204,31 +210,47 @@ function sendPlayerTransactionRequestNotification(notification, onSuccess) {
         });
 }
 
-function sendNotificationToUser(username, message, onSuccess) {
-  request({
-    url: 'https://fcm.googleapis.com/fcm/send',
-    method: 'POST',
-    headers: {
-      'Content-Type' :' application/json',
-      'Authorization': 'key='+API_KEY
-    },
-    body: JSON.stringify({
-      notification: {
-        body: 'this is the message body',
-        title: message
-      },
-      to : '/topics/'+username
-    })
-  }, function(error, response, body) {
-    if (error) { console.error(error); }
-    else if (response.statusCode >= 400) {
-      console.error('HTTP Error: '+response.statusCode+' - '+response.statusMessage);
-    }
-    else {
-      onSuccess();
-    }
-  });
+function sendEndGameNotification(notification, onSuccess) {
+
+    var gameId = notification.gameId
+    var playerId = notification.winnerId
+    var gameTopic = '/topics/' + gameId
+
+    console.log('sendEndGameNotification: Trying to send ' + notification.notificationType + ' to ' + gameId);
+
+    request({
+        url: 'https://fcm.googleapis.com/fcm/send',
+        method: 'POST',
+        headers: {
+            'Content-Type' :' application/json',
+            'Authorization': 'key='+API_KEY
+        },
+
+        body: JSON.stringify({
+
+            data: {
+                "GAME_ID" : gameId,
+                "WINNER_ID" : playerId,
+            },
+            notification: {
+                body: notification.notificationType,
+            },
+            to : gameTopic
+        })
+        },
+
+        function(error, response, body) {
+            if (error) { console.error(error); }
+                else if (response.statusCode >= 400) {
+                    console.error('HTTP Error: ' + response.statusCode+' - ' + response.statusMessage);
+                }
+                else {
+                    onSuccess();
+                    console.log('sendEndGameNotification: Successfully sent ' + notification.notificationType + ' notification');
+                }
+        });
 }
+
 
 // start listening
 listenForNotificationRequests();

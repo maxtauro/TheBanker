@@ -48,12 +48,12 @@ class DialogFragmentPlayerTransaction: DialogFragmentPaymentBase() {
         when (tranType) {
             PlayerTransactionEnum.SEND_MONEY -> {
                 notificationUtil.sendSendMoneyNotification(paymentAmount, auth.uid, recipientId)
-                firebaseTransactionHelper.createSendMoneyRequest(paymentAmount, auth.uid, recipientId)
+                firebaseTransactionHelper.createSendMoneyRequest(paymentAmount, auth.uid, auth.currentUser!!.displayName, recipientId)
             }
 
             PlayerTransactionEnum.REQUEST_MONEY -> {
                 notificationUtil.sendRequestMoneyNotification(paymentAmount, auth.uid, recipientId)
-                firebaseTransactionHelper.createRequestMoneyRequest(paymentAmount, auth.uid, recipientId)
+                firebaseTransactionHelper.createRequestMoneyRequest(paymentAmount, auth.uid, auth.currentUser!!.displayName, recipientId)
             }
         }
     }

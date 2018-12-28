@@ -1,7 +1,9 @@
 package com.maxtauro.monopolywallet.util
 
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.maxtauro.monopolywallet.Constants.BankTransactionEnums
+import com.maxtauro.monopolywallet.Player
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerTransactionRequestNotification
 import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 
@@ -11,6 +13,7 @@ import com.maxtauro.monopolywallet.util.NotificationTypes.StandardNotifications
 class FirebaseNotificationUtil(val gameId: String) {
 
     //TODO put create some interface to hold notification Fields
+    private val auth = FirebaseAuth.getInstance().currentUser
 
     private val ref = FirebaseDatabase.getInstance().reference
     private val notifications = ref.child("notificationRequests")
@@ -40,6 +43,7 @@ class FirebaseNotificationUtil(val gameId: String) {
 
         notificationBuilder.addItem("paymentAmount", paymentAmount)
         notificationBuilder.addItem("playerId", playerId)
+        notificationBuilder.addItem("playerName", auth?.displayName!!)
 
         val notification = notificationBuilder.build()
 
@@ -58,6 +62,8 @@ class FirebaseNotificationUtil(val gameId: String) {
 
         notificationBuilder.addItem("paymentAmount", paymentAmount)
         notificationBuilder.addItem("playerId", playerId)
+        notificationBuilder.addItem("playerName", auth?.displayName!!)
+
         notificationBuilder.addItem(PlayerTransactionRequestNotification.MessageDataFields.RECIPIENT_ID.toString(), recipientId)
 
         val notification = notificationBuilder.build()
@@ -76,7 +82,19 @@ class FirebaseNotificationUtil(val gameId: String) {
 
         notificationBuilder.addItem("paymentAmount", paymentAmount)
         notificationBuilder.addItem("playerId", playerId)
+        notificationBuilder.addItem("playerName", auth?.displayName!!)
         notificationBuilder.addItem(PlayerTransactionRequestNotification.MessageDataFields.RECIPIENT_ID.toString(), recipientId)
+
+        val notification = notificationBuilder.build()
+        sendNotification(notification)
+    }
+
+    fun sendEndGameNotification(winnerInfo: Player) {
+        val notificationBuilder = NotificationBuilder()
+        notificationBuilder.setGameAndNotificationType(gameId, StandardNotifications.END_GAME_NOTIFICATION)
+
+        notificationBuilder.addItem("winnerId", winnerInfo.playerId)
+        notificationBuilder.addItem("winnerName", winnerInfo.playerName)
 
         val notification = notificationBuilder.build()
         sendNotification(notification)

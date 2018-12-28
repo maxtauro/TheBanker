@@ -74,6 +74,11 @@ class FirebaseReferenceUtil(val gameId: String): FirebaseReferenceConstants() {
         return referenceBuilder.buildRef()
     }
 
+    fun getPlayerListRef(): DatabaseReference {
+        referenceBuilder.addNodePath(PLAYER_LIST_NODE_KEY)
+        return referenceBuilder.buildRef()
+    }
+
 
     private class ReferenceBuilder(val gameId: String, val databaseReference: DatabaseReference) {
 

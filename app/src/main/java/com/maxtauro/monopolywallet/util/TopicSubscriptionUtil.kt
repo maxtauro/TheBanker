@@ -4,7 +4,7 @@ import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 
 /**
- * TODO add authoring, date, and desc
+ * Util Class for subscribing to Firebase Cloud Messaging Topics
  */
 
 class TopicSubscriptionUtil {

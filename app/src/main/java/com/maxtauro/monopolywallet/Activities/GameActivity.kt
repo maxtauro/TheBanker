@@ -1,6 +1,8 @@
 package com.maxtauro.monopolywallet.Activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -23,15 +25,20 @@ import com.maxtauro.monopolywallet.Firebase.FirebaseHelper
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.Constants.IntentExtrasConstants
 import com.maxtauro.monopolywallet.DialogFragments.*
+import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
 import com.maxtauro.monopolywallet.util.NotificationTypes.PlayerGameNotification
+import android.support.v7.widget.DividerItemDecoration
+
+
 
 abstract class GameActivity: AppCompatActivity() {
 
     var isHost = false
 
-    //Firebase
+    //Firebase util classes
     protected lateinit var firebaseReferenceUtil: FirebaseReferenceUtil
     protected lateinit var firebaseHelper: FirebaseHelper
+    protected lateinit var firbaseNotificationUtil: FirebaseNotificationUtil
     lateinit var auth: FirebaseAuth
 
     //RecyclerView
@@ -61,6 +68,7 @@ abstract class GameActivity: AppCompatActivity() {
 
         firebaseHelper = FirebaseHelper(gameId)
         firebaseReferenceUtil = FirebaseReferenceUtil(gameId)
+        firbaseNotificationUtil = FirebaseNotificationUtil(gameId)
     }
 
     private fun setupButtons() {
@@ -132,6 +140,8 @@ abstract class GameActivity: AppCompatActivity() {
         layoutManager = LinearLayoutManager(this)
         listPlayersRecyclerView.layoutManager = layoutManager
 
+        val dividerItemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        listPlayersRecyclerView.addItemDecoration(dividerItemDecoration)
 
         playerListAdapter = object : FirebaseRecyclerAdapter<Player, PlayerListViewHolder>(playerListOptions) {
 
@@ -177,6 +187,8 @@ abstract class GameActivity: AppCompatActivity() {
         playerGameNotificationListLayoutManager = createLayoutManager()
         playerGameNotificationListRecyclerView.layoutManager = playerGameNotificationListLayoutManager
 
+        val dividerItemDecoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
+        playerGameNotificationListRecyclerView.addItemDecoration(dividerItemDecoration)
 
         playerGameNotificationsListAdapter = object : FirebaseRecyclerAdapter<PlayerGameNotification, PlayerGameNotificationsListViewHolder>(notificationListOptions) {
 
@@ -188,15 +200,11 @@ abstract class GameActivity: AppCompatActivity() {
             }
 
             override fun onBindViewHolder(holder: PlayerGameNotificationsListViewHolder, position: Int, notification: PlayerGameNotification) {
-                holder.playerGameNotifications = notification
 
-                holder.txt_amount.text = notification.amount.toString()
-                holder.txt_notification_type.text = notification.notificationType.toString()
-                holder.txt_player_id.text = notification.playerId //TODO, actual user name needs to be a parameter
+                holder.displayNotification(notification, applicationContext)
                 holder.itemView.setOnClickListener {
                     DialogTransactionConfirmation.newInstance(notification).show(supportFragmentManager, "DialogTransactionConfirmation")
                 }
-
             }
         }
 
@@ -218,5 +226,11 @@ abstract class GameActivity: AppCompatActivity() {
         bundle.putBoolean(IntentExtrasConstants.IS_HOST_EXTRA, isHost)
         dialogFragmentLoseGame.arguments = bundle
         dialogFragmentLoseGame.show(supportFragmentManager, "DialogFragmentLoseGame")
+    }
+
+    fun returnToStartPage() {
+        val startPageIntent = Intent(this, StartPage::class.java)
+        startActivity(startPageIntent)
+        finish()
     }
 }

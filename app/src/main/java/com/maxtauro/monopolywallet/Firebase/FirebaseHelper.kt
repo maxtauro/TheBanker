@@ -2,6 +2,7 @@ package com.maxtauro.monopolywallet.Firebase
 
 import android.content.Intent
 import android.support.annotation.WorkerThread
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.maxtauro.monopolywallet.Player
@@ -13,6 +14,9 @@ import com.maxtauro.monopolywallet.service.NotificationService
 import com.maxtauro.monopolywallet.util.FirebaseNotificationUtil
 import com.maxtauro.monopolywallet.util.FirebaseReferenceUtil
 import com.maxtauro.monopolywallet.util.TaskHelper
+import com.google.firebase.auth.UserProfileChangeRequest
+
+
 
 /**
  * A helper class for using firebase realtime database.
@@ -102,6 +106,27 @@ open class FirebaseHelper(val gameId: String) {
         playerListRef.child(playerId).child(FirebaseReferenceConstants.PLAYER_ACTIVE_NODE_KEY).setValue(isActive)
     }
 
+    fun moveGameToCompletedNode() {
+        gameRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val completedGamesRef = firebaseReferenceUtil.databaseRef.child(FirebaseReferenceConstants.COMPLETED_GAMES_REF)
+                completedGamesRef.child(gameId).setValue(gameRef)
+                gameRef.removeValue()
+            }
+            override fun onCancelled(databaseError: DatabaseError) {}
+        })
+
+
+    }
+
+    fun setDisplayName(hostName: String) {
+        val currentUser = auth.currentUser
+
+        val profileUpdates = UserProfileChangeRequest.Builder()
+                .setDisplayName(hostName).build()
+
+        currentUser?.updateProfile(profileUpdates)
+    }
 
     companion object {
 
